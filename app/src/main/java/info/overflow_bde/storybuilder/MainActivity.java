@@ -34,6 +34,8 @@ public class MainActivity extends AppCompatActivity {
             //Bitmap image = (Bitmap) data.getExtras().get("data");
             //ImageView imageview = (ImageView) findViewById(R.id.ImageView01);
             //imageview.setImageBitmap(image);
+            Intent intent = new Intent(this, EditorActivity.class);
+            startActivity(intent);
         }
     }
 }

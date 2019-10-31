@@ -1,11 +1,13 @@
 package info.overflow_bde.storybuilder;
 
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
+
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Objects;
@@ -32,22 +34,32 @@ public class MainActivity extends AppCompatActivity {
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         Intent intent = new Intent(this, EditorActivity.class);
-        if (requestCode == PICTURE_TAKEN) {
-            System.out.println("image was taken");
-            Bitmap image = (Bitmap) data.getExtras().get("data");
-            try {
-                String uri = getCacheDir().getAbsolutePath() + "/tmpImage";
-                FileOutputStream out = new FileOutputStream(uri);
-                image.compress(Bitmap.CompressFormat.PNG, 100, out);
-                out.close();
-                intent.putExtra("Uri", uri);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        String uri = this.getCacheDir().getAbsolutePath() + "/tmpImage";
+        Bitmap image = null;
+
+        switch (requestCode) {
+            case PICTURE_TAKEN:
+                System.out.println("image was taken");
+                image = (Bitmap) data.getExtras().get("data");
+                break;
+            case PICTURE_CHOSEN:
+                System.out.println("image was choosen");
+                try {
+                    image = MediaStore.Images.Media.getBitmap(this.getContentResolver(), data.getData());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                break;
         }
-        if (requestCode == PICTURE_CHOSEN) {
-            System.out.println("image was choosen");
-            intent.putExtra("Uri", Objects.requireNonNull(data.getData()).toString());
+
+        //create temporary image in cache
+        try {
+            FileOutputStream out = new FileOutputStream(uri);
+            image.compress(Bitmap.CompressFormat.PNG, 100, out);
+            out.close();
+            intent.putExtra("Uri", uri);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         startActivity(intent);
     }

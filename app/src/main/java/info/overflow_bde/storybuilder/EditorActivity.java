@@ -13,5 +13,7 @@ public class EditorActivity extends Activity {
         Uri imgURI = Uri.parse(this.getIntent().getStringExtra("Uri"));
         ImageView imageview = findViewById(R.id.imageView);
         imageview.setImageURI(imgURI);
+
+        //@TODO not forgot tmp img in "this.getCacheDir().getAbsolutePath() + "/tmpImage""
     }
 }

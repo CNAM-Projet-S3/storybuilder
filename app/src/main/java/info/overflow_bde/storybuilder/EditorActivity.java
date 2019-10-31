@@ -14,5 +14,4 @@ public class EditorActivity extends Activity {
         ImageView imageview = findViewById(R.id.imageView);
         imageview.setImageURI(imgURI);
     }
-
 }

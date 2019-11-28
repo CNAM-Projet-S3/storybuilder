@@ -1,39 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_activity"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:background="@drawable/main"
     android:orientation="vertical"
     tools:context=".MainActivity">
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="200dp"
-        android:gravity="center"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/button"
-            android:layout_width="110sp"
-            android:layout_height="80sp"
-            android:layout_marginRight="20sp"
-            android:layout_gravity="center_horizontal|center_vertical"
-            android:text="Prendre une photo"
-            android:onClick="openCamera"
-            />
-
-        <Button
-            android:id="@+id/button"
-            android:layout_width="110sp"
-            android:layout_height="80sp"
-            android:layout_marginLeft="20sp"
-            android:layout_gravity="center_horizontal|center_vertical"
-            android:text="Choisir une photo"
-            android:onClick="choicePicture"
-            />
-    </LinearLayout>
 
 </RelativeLayout>

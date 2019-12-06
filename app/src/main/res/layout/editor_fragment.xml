@@ -7,13 +7,6 @@
     android:background="#FFF"
     android:orientation="vertical">
 
-    <!--        <com.google.android.material.navigation.NavigationView-->
-    <!--            android:id="@+id/navigation"-->
-    <!--            android:layout_width="wrap_content"-->
-    <!--            android:layout_height="match_parent"-->
-    <!--            android:layout_gravity="left|right"-->
-    <!--            app:headerLayout="@layout/navigation_header"-->
-    <!--            app:menu="@menu/my_navigation_items" />-->
     <ImageView
         android:id="@+id/image_view_editor"
         android:layout_width="match_parent"

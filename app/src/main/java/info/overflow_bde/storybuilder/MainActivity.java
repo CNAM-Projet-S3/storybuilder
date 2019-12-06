@@ -17,20 +17,23 @@ public class MainActivity extends AppCompatActivity {
     final int PICTURE_TAKEN = 1;
     final int PICTURE_CHOSEN = 2;
 
-    private MainFragment mainFragmentFrag;
+    private MainFragment mainFragmentFragment;
 
     private EditorFragment editorFragment;
 
     private FragmentManager fragmentManager;
 
+    private MenuFragment menuFragment;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.mainFragmentFrag = new MainFragment();
+        this.mainFragmentFragment = new MainFragment();
         this.fragmentManager = getSupportFragmentManager();
+        this.menuFragment = new MenuFragment();
 
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.add(R.id.main_activity, this.mainFragmentFrag);
+        fragmentTransaction.add(R.id.main_activity, this.mainFragmentFragment);
         fragmentTransaction.commit();
 
         this.setContentView(R.layout.activity_main);
@@ -73,6 +76,9 @@ public class MainActivity extends AppCompatActivity {
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.add(R.id.main_activity, this.editorFragment);
         fragmentTransaction.commit();
+
+        //display menu
+        this.showFragment(this.menuFragment);
 
     }
 

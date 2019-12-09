@@ -13,18 +13,17 @@ public class EditorFragment extends Fragment {
 
     private Bitmap img;
 
+    public EditorFragment(Bitmap img) {
+        this.img = img;
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        View v = inflater.inflate(R.layout.editor_fragment, container, false);
-
-        ImageView iv = v.findViewById(R.id.image_view_editor);
+        View view = inflater.inflate(R.layout.editor_fragment, container, false);
+        ImageView iv = view.findViewById(R.id.image_view_editor);
         iv.setImageBitmap(this.img);
 
-        return v;
-    }
-
-    public void setImg(Bitmap img) {
-        this.img = img;
+        return view;
     }
 }

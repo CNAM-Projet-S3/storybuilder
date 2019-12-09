@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
 
+import androidx.annotation.IdRes;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -17,26 +19,14 @@ public class MainActivity extends AppCompatActivity {
     final int PICTURE_TAKEN = 1;
     final int PICTURE_CHOSEN = 2;
 
-    private MainFragment mainFragmentFragment;
-
-    private EditorFragment editorFragment;
-
-    private FragmentManager fragmentManager;
-
-    private MenuFragment menuFragment;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.mainFragmentFragment = new MainFragment();
-        this.fragmentManager = getSupportFragmentManager();
-        this.menuFragment = new MenuFragment();
-
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.add(R.id.main_activity, this.mainFragmentFragment);
-        fragmentTransaction.commit();
 
         this.setContentView(R.layout.activity_main);
+
+        //display main menu
+        this.showFragment(new MainFragment(), R.id.main_activity, "main_menu");
     }
 
     public void openCamera(View view) {
@@ -72,21 +62,17 @@ public class MainActivity extends AppCompatActivity {
                 break;
         }
 
-        this.editorFragment = new EditorFragment();
-        this.editorFragment.setImg(image);
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.add(R.id.main_activity, this.editorFragment);
-        fragmentTransaction.commit();
+        //display picture
+        this.showFragment(new EditorFragment(image), R.id.main_activity, "editor");
 
         //display menu
-        this.showFragment(this.menuFragment);
-
+        this.showFragment(new MenuFragment(), R.id.editor_fragment, "menu");
     }
 
-    private void showFragment(Fragment fragment) {
+    private void showFragment(Fragment fragment, @IdRes int containerViewId, @Nullable String tag) {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.add(R.id.editor_fragment, fragment);
+        fragmentTransaction.add(containerViewId, fragment, tag);
         fragmentTransaction.commit();
     }
 }

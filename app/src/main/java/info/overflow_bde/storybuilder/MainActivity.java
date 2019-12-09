@@ -72,7 +72,8 @@ public class MainActivity extends AppCompatActivity {
                 break;
         }
 
-        this.editorFragment = new EditorFragment(image);
+        this.editorFragment = new EditorFragment();
+        this.editorFragment.setImg(image);
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.add(R.id.main_activity, this.editorFragment);
         fragmentTransaction.commit();

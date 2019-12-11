@@ -9,8 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class StickerAdapter extends FragmentStatePagerAdapter {
-    private final List<Fragment> mFragmentList = new ArrayList<>();
-    private final List<String> mFragmentTitleList = new ArrayList<>();
+    private final List<Fragment> mFragmentList      = new ArrayList<>();
+    private final List<String>   mFragmentTitleList = new ArrayList<>();
 
     public StickerAdapter(FragmentManager fm) {
         super(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);

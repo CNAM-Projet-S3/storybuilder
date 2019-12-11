@@ -10,7 +10,7 @@ import androidx.fragment.app.Fragment;
 
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
-public class ShareOrSaveFragment extends Fragment {
+public class ExportFragment extends Fragment {
 
     private BottomSheetBehavior behavior;
 
@@ -28,8 +28,8 @@ public class ShareOrSaveFragment extends Fragment {
     }
 
     private void setButtonShareAndSave(View view) {
-        Button buttonShare = (Button) view.findViewById(R.id.share);
-        Button buttonSave = (Button) view.findViewById(R.id.save);
+        Button buttonShare = view.findViewById(R.id.share);
+        Button buttonSave  = view.findViewById(R.id.save);
         buttonShare.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

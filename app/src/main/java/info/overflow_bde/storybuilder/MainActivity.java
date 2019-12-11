@@ -16,7 +16,7 @@ import androidx.fragment.app.FragmentTransaction;
 import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity {
-    final int PICTURE_TAKEN = 1;
+    final int PICTURE_TAKEN  = 1;
     final int PICTURE_CHOSEN = 2;
 
     @Override
@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showFragment(Fragment fragment, @IdRes int containerViewId, @Nullable String tag) {
-        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentManager     fragmentManager     = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.add(containerViewId, fragment, tag);
         fragmentTransaction.commit();

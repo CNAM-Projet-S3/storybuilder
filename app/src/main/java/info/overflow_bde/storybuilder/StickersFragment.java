@@ -38,7 +38,7 @@ public class StickersFragment extends Fragment {
 
     private void configTabs(View view) {
         ViewPager viewPager = view.findViewById(R.id.viewPager);
-        TabLayout tabs = (TabLayout) view.findViewById(R.id.tabs_stickers);
+        TabLayout tabs      = (TabLayout) view.findViewById(R.id.tabs_stickers);
 
         StickerAdapter stickerAdapter = new StickerAdapter(getFragmentManager());
         stickerAdapter.addFragment(new PersonalStickerFragment(), "Perso");

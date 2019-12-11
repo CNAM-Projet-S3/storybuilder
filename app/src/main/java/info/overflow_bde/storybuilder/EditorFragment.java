@@ -18,10 +18,10 @@ public class EditorFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        View view = inflater.inflate(R.layout.editor_fragment, container, false);
-        ImageView iv = view.findViewById(R.id.image_view_editor);
+        View      view = inflater.inflate(R.layout.editor_fragment, container, false);
+        ImageView iv   = view.findViewById(R.id.image_view_editor);
         iv.setImageBitmap(this.img);
 
         return view;

@@ -11,10 +11,13 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 public class MenuFragment extends Fragment {
 
     private ShareOrSaveFragment shareOrSaveFragment;
     private FragmentTransaction fragmentTransaction;
+    private StickersFragment stickersFragment;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, final Bundle savedInstanceState){
@@ -25,6 +28,17 @@ public class MenuFragment extends Fragment {
 
         this.shareOrSaveActionMenuButton(view);
         this.exitMenuActionButton(view);
+        this.stickersMenuActionButton(view);
+
+        //hidden action menu
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                stickersFragment.hidden();
+                shareOrSaveFragment.hidden();
+            }
+        });
+        this.fragmentTransaction.commit();
 
         return view;
     }
@@ -32,15 +46,7 @@ public class MenuFragment extends Fragment {
     private void shareOrSaveActionMenuButton(View view) {
         this.shareOrSaveFragment = new ShareOrSaveFragment();
         this.fragmentTransaction.add(R.id.editor_fragment, shareOrSaveFragment, "shareOrSave");
-        this.fragmentTransaction.commit();
         Button buttonShareOrSave = (Button) view.findViewById(R.id.save_or_share);
-        view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                shareOrSaveFragment.hidden();
-            }
-        });
-
         buttonShareOrSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -60,6 +66,20 @@ public class MenuFragment extends Fragment {
                 getActivity().finish();
                 getActivity().overridePendingTransition(0, 0);
                 startActivity(intent);
+            }
+        });
+    }
+
+    private void stickersMenuActionButton(View view) {
+        this.stickersFragment = new StickersFragment();
+        this.fragmentTransaction.add(R.id.editor_fragment, this.stickersFragment, "stickers");
+        FloatingActionButton buttonStickers = (FloatingActionButton) view.findViewById(R.id.editor_sticker);
+
+
+        buttonStickers.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                stickersFragment.show();
             }
         });
     }

@@ -11,12 +11,11 @@ import androidx.viewpager.widget.ViewPager;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.tabs.TabLayout;
 
-import info.overflow_bde.storybuilder.R;
 import info.overflow_bde.storybuilder.sticker.InterestPointStickerFragment;
 import info.overflow_bde.storybuilder.sticker.MovieStickerFragment;
 import info.overflow_bde.storybuilder.sticker.MusicPlayingStickerFragment;
 import info.overflow_bde.storybuilder.sticker.PersonalStickerFragment;
-import info.overflow_bde.storybuilder.sticker.StickerAdapter;
+import info.overflow_bde.storybuilder.adapter.StickerAdapter;
 import info.overflow_bde.storybuilder.sticker.WeatherStickerFragment;
 
 public class StickersFragment extends Fragment {

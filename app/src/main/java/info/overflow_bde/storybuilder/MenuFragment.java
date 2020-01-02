@@ -83,4 +83,19 @@ public class MenuFragment extends Fragment {
             }
         });
     }
+
+    public void show() {
+        FragmentManager fm = getFragmentManager();
+        fm.beginTransaction()
+                .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
+                .show(this)
+                .commit();
+    }
+
+    public void hidden() {
+        FragmentManager fm = getFragmentManager();
+        fm.beginTransaction()
+                .hide(this)
+                .commit();
+    }
 }

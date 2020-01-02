@@ -69,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
         this.showFragment(new MenuFragment(), R.id.editor_fragment, "menu");
     }
 
-    private void showFragment(Fragment fragment, @IdRes int containerViewId, @Nullable String tag) {
+    public void showFragment(Fragment fragment, @IdRes int containerViewId, @Nullable String tag) {
         FragmentManager     fragmentManager     = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.add(containerViewId, fragment, tag);

@@ -1,4 +1,4 @@
-package info.overflow_bde.storybuilder.sticker;
+package info.overflow_bde.storybuilder.adapter;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;

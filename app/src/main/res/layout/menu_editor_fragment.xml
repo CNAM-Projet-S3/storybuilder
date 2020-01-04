@@ -4,8 +4,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/main_menu_editor">
-
+    android:id="@+id/main_menu_editor"
+    android:clickable="false"
+    android:focusable="false">
     <LinearLayout
         android:id="@+id/editor_menu_left"
         android:layout_width="65dp"
@@ -14,6 +15,8 @@
         android:layout_marginTop="10dp"
         android:layout_marginStart="10dp"
         android:orientation="vertical"
+        android:clickable="false"
+        android:focusable="false"
         >
         <com.google.android.material.button.MaterialButton
             android:id="@+id/action_menu_exit"
@@ -37,6 +40,8 @@
         android:layout_marginTop="10dp"
         android:layout_marginEnd="10dp"
         android:layout_marginBottom="10dp"
+        android:clickable="false"
+        android:focusable="false"
         android:orientation="vertical">
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -82,6 +87,8 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:clickable="false"
+            android:focusable="false"
             android:orientation="vertical">
 
             <com.google.android.material.button.MaterialButton

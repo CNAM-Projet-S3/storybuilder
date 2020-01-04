@@ -39,9 +39,7 @@ public class InterestPointStickerFragment extends Fragment {
                 InterestPointEntity o = (InterestPointEntity) interestPointList.getItemAtPosition(position);
                 StickersFragment stickersFragment = (StickersFragment) Objects.requireNonNull(getFragmentManager()).findFragmentByTag("stickers");
                 Objects.requireNonNull(stickersFragment).hidden();
-                ((MainActivity) Objects.requireNonNull(getActivity())).showFragment(new LayerFragment(o.icon, o.title), R.id.editor_fragment, o.title);
-                //@TODO put menu behind but i don't know
-
+                ((MainActivity) Objects.requireNonNull(getActivity())).showFragment(new LayerFragment(o.icon, o.title), R.id.editor_content, o.title);
             }
         });
 

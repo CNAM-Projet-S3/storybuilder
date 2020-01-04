@@ -39,7 +39,7 @@ public class LayerFragment extends Fragment {
         TextView tv = view.findViewById(R.id.layer_title);
         iv.setImageBitmap(this.icon);
         tv.setText(this.title);
-        mainLayout = (RelativeLayout) container.findViewById(R.id.editor_fragment);
+        mainLayout = (RelativeLayout) container.findViewById(R.id.editor_content);
         menuFragment = (MenuFragment) Objects.requireNonNull(this.getFragmentManager()).findFragmentByTag("menu");
 
         view.setOnTouchListener(onTouchListener());
@@ -60,6 +60,7 @@ public class LayerFragment extends Fragment {
                 switch (event.getAction() & MotionEvent.ACTION_MASK) {
 
                     case MotionEvent.ACTION_DOWN:
+                        menuFragment.hidden();
                         RelativeLayout.LayoutParams lParams = (RelativeLayout.LayoutParams)
                                 view.getLayoutParams();
 

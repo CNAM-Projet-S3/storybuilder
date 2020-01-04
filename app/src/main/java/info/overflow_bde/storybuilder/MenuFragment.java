@@ -3,6 +3,7 @@ package info.overflow_bde.storybuilder;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -31,7 +32,7 @@ public class MenuFragment extends Fragment {
         this.stickersMenuActionButton(view);
 
         //hidden action menu
-        view.setOnClickListener(new View.OnClickListener() {
+        container.findViewById(R.id.editor_content).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 stickersFragment.hidden();

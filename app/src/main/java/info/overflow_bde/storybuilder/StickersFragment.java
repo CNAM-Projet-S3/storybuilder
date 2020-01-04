@@ -55,6 +55,7 @@ public class StickersFragment extends Fragment {
     public void show() {
         if (this.behavior.getState() != BottomSheetBehavior.STATE_EXPANDED) {
             this.behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+            this.getView().bringToFront();
         }
     }
 

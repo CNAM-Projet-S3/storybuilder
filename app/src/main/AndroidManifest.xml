@@ -2,8 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="info.overflow_bde.storybuilder">
 
-    <uses-permission android:name="android.media.action.IMAGE_CAPTURE"></uses-permission>
-    <uses-permission android:name="android.permission.INTERNET"></uses-permission>
+    <uses-permission android:name="android.media.action.IMAGE_CAPTURE"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
         android:allowBackup="true"
@@ -35,5 +36,4 @@
             </intent-filter>
         </activity>
     </application>
-
 </manifest>

@@ -15,9 +15,14 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class MenuFragment extends Fragment {
 
-    private ExportFragment      exportFragment;
     private FragmentTransaction fragmentTransaction;
     private StickersFragment    stickersFragment;
+    private EditorFragment      editorFragment;
+    private ExportFragment      exportFragment;
+
+    public MenuFragment(EditorFragment frg) {
+        this.editorFragment = frg;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, final Bundle savedInstanceState) {
@@ -31,12 +36,9 @@ public class MenuFragment extends Fragment {
         this.stickersMenuActionButton(view);
 
         //hidden action menu
-        view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                stickersFragment.hidden();
-                exportFragment.hidden();
-            }
+        view.setOnClickListener(v -> {
+            stickersFragment.hidden();
+            exportFragment.hidden();
         });
         this.fragmentTransaction.commit();
 
@@ -44,15 +46,10 @@ public class MenuFragment extends Fragment {
     }
 
     private void shareOrSaveActionMenuButton(View view) {
-        this.exportFragment = new ExportFragment();
+        this.exportFragment = new ExportFragment(this.editorFragment);
         this.fragmentTransaction.add(R.id.editor_fragment, exportFragment, "shareOrSave");
-        Button buttonShareOrSave = (Button) view.findViewById(R.id.save_or_share);
-        buttonShareOrSave.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                exportFragment.show();
-            }
-        });
+        Button buttonShareOrSave = view.findViewById(R.id.save_or_share);
+        buttonShareOrSave.setOnClickListener(v -> exportFragment.show());
     }
 
     private void exitMenuActionButton(View view) {

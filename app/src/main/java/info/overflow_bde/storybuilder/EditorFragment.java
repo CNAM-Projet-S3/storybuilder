@@ -11,7 +11,8 @@ import androidx.fragment.app.Fragment;
 
 public class EditorFragment extends Fragment {
 
-    private Bitmap img;
+    private ImageView iv;
+    private Bitmap    img;
 
     public EditorFragment(Bitmap img) {
         this.img = img;
@@ -20,10 +21,19 @@ public class EditorFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        View      view = inflater.inflate(R.layout.editor_fragment, container, false);
-        ImageView iv   = view.findViewById(R.id.image_view_editor);
-        iv.setImageBitmap(this.img);
+        View view = inflater.inflate(R.layout.editor_fragment, container, false);
+
+        this.iv = view.findViewById(R.id.image_view_editor);
+        this.iv.setImageBitmap(this.img);
 
         return view;
+    }
+
+    public Bitmap getImage() {
+        return this.img;
+    }
+
+    public void refreshImage() {
+        this.iv.setImageBitmap(this.img);
     }
 }

@@ -16,8 +16,11 @@ import androidx.fragment.app.FragmentTransaction;
 import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity {
+
     final int PICTURE_TAKEN  = 1;
     final int PICTURE_CHOSEN = 2;
+
+    private EditorFragment editor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +48,6 @@ public class MainActivity extends AppCompatActivity {
 
         switch (requestCode) {
             case PICTURE_TAKEN:
-                System.out.println("image was taken");
                 try {
                     image = (Bitmap) data.getExtras().get("data");
                 } catch (Exception e) {
@@ -53,7 +55,6 @@ public class MainActivity extends AppCompatActivity {
                 }
                 break;
             case PICTURE_CHOSEN:
-                System.out.println("image was choosen");
                 try {
                     image = MediaStore.Images.Media.getBitmap(this.getContentResolver(), data.getData());
                 } catch (IOException e) {
@@ -63,10 +64,11 @@ public class MainActivity extends AppCompatActivity {
         }
 
         //display picture
-        this.showFragment(new EditorFragment(image), R.id.main_activity, "editor");
+        this.editor = new EditorFragment(image);
+        this.showFragment(this.editor, R.id.main_activity, "editor");
 
         //display menu
-        this.showFragment(new MenuFragment(), R.id.editor_fragment, "menu");
+        this.showFragment(new MenuFragment(this.editor), R.id.editor_fragment, "menu");
     }
 
     private void showFragment(Fragment fragment, @IdRes int containerViewId, @Nullable String tag) {

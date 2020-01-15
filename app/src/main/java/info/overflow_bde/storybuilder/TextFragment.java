@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -40,8 +41,12 @@ public class TextFragment extends Fragment {
 		super.onCreate(savedInstanceState);
 		View view = inflater.inflate(R.layout.text_fragment, container, false);
 		editText = view.findViewById(R.id.layer_text);
-		editText.setHint("TEXTE TEXTE");
+		editText.setHint("VOTRE TEXTE");
 		editText.setTextSize(this.size);
+		editText.setGravity(Gravity.CENTER);
+
+		editText.setBackgroundColor(0xAAFFFFFF);
+
 		mainLayout = (RelativeLayout) container.findViewById(R.id.editor_content);
 		menuFragment = (MenuFragment) Objects.requireNonNull(this.getFragmentManager()).findFragmentByTag("menu");
 
@@ -63,7 +68,7 @@ public class TextFragment extends Fragment {
 				switch (event.getAction() & MotionEvent.ACTION_MASK) {
 
 					case MotionEvent.ACTION_DOWN:
-						menuFragment.hidden();
+						menuFragment.hide();
 						RelativeLayout.LayoutParams lParams = (RelativeLayout.LayoutParams)
 								view.getLayoutParams();
 
@@ -74,7 +79,7 @@ public class TextFragment extends Fragment {
 						menuFragment.show();
 						break;
 					case MotionEvent.ACTION_MOVE:
-						menuFragment.hidden();
+						menuFragment.hide();
 						RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) view
 								.getLayoutParams();
 						layoutParams.leftMargin = x - xDelta;

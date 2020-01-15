@@ -27,6 +27,9 @@ import java.io.IOException;
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
+
+    public static EditorFragment ef;
+    public static MenuFragment mf;
     final int PICTURE_TAKEN  = 1;
     final int PICTURE_CHOSEN = 2;
     private String currentPhotoPath;
@@ -116,10 +119,10 @@ public class MainActivity extends AppCompatActivity {
             image = Bitmap.createBitmap(Objects.requireNonNull(image), 0, 0, image.getWidth(), image.getHeight(), matrix, true);
 
             //display picture
-            this.showFragment(new EditorFragment(image), R.id.main_activity, "editor");
+            this.showFragment(ef = new EditorFragment(image), R.id.main_activity, "editor");
 
             //display menu
-            this.showFragment(new MenuFragment(), R.id.editor_fragment, "menu");
+            this.showFragment(mf = new MenuFragment(), R.id.editor_fragment, "menu");
         }
     }
 

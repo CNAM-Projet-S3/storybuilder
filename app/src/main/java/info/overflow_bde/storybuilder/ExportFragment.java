@@ -165,13 +165,17 @@ public class ExportFragment extends Fragment {
             outputStream.flush();
             outputStream.close();
 
-            MainActivity.mf.show();
+            Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+            mediaScanIntent.setData(Uri.fromFile(imageFile));
+            getContext().sendBroadcast(mediaScanIntent);
+
+            ((MenuFragment)getActivity().getSupportFragmentManager().findFragmentByTag("menu")).show();
             return imageFile;
         } catch (Throwable e) {
             e.printStackTrace();
         }
 
-        MainActivity.mf.show();
+        ((MenuFragment)getActivity().getSupportFragmentManager().findFragmentByTag("menu")).show();
         return null;
     }
 

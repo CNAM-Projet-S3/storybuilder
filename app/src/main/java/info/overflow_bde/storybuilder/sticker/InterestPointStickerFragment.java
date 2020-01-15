@@ -75,7 +75,7 @@ public class InterestPointStickerFragment extends Fragment {
                 InterestPointEntity o                = (InterestPointEntity) interestPointList.getItemAtPosition(position);
                 StickersFragment    stickersFragment = (StickersFragment) Objects.requireNonNull(getFragmentManager()).findFragmentByTag("stickers");
                 Objects.requireNonNull(stickersFragment).hidden();
-                ((MainActivity) Objects.requireNonNull(getActivity())).showFragment(new LayerFragment(o.icon, o.title), R.id.editor_content, o.title);
+                ((MainActivity) Objects.requireNonNull(getActivity())).addFragment(new LayerFragment(o.icon, o.title), R.id.editor_content, o.title);
             }
         });
 

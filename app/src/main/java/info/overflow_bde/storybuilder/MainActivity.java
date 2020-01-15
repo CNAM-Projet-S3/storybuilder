@@ -38,9 +38,10 @@ public class MainActivity extends AppCompatActivity {
         this.setContentView(R.layout.activity_main);
 
         //display main menu
-        this.showFragment(new MainFragment(), R.id.main_activity, "main_menu");
+        this.addFragment(new MainFragment(), R.id.main_activity, "main_menu");
     }
 
+    // Open the phone's camera application with an intent
     public void openCamera(View view) {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         // Ensure that there's a camera activity to handle the intent
@@ -63,11 +64,13 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    // Open the gallery to choose a picture
     public void choicePicture(View view) {
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
         startActivityForResult(intent, PICTURE_CHOSEN);
     }
 
+    // take the intent data to show the picture
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
@@ -115,14 +118,17 @@ public class MainActivity extends AppCompatActivity {
 
             image = Bitmap.createBitmap(Objects.requireNonNull(image), 0, 0, image.getWidth(), image.getHeight(), matrix, true);
 
+            this.removeImageFile();
+
             //display picture
-            this.showFragment(new EditorFragment(image), R.id.main_activity, "editor");
+            this.addFragment(new EditorFragment(image), R.id.main_activity, "editor");
 
             //display menu
-            this.showFragment(new MenuFragment(), R.id.editor_fragment, "menu");
+            this.addFragment(new MenuFragment(), R.id.editor_fragment, "menu");
         }
     }
 
+    // create a new image file ine the application folder
     private File createImageFile() throws IOException {
         // Create an image file name
         String imageFileName = "JPEG_" + "storybuilder"+ "_";
@@ -148,13 +154,21 @@ public class MainActivity extends AppCompatActivity {
         return image;
     }
 
-    public void showFragment(Fragment fragment, @IdRes int containerViewId, @Nullable String tag) {
+    // Delete a new image file in the application folder
+    public void removeImageFile(){
+        File file = new File(this.currentPhotoPath);
+        file.delete();
+    }
+
+    // Add a fragment into the main activity
+    public void addFragment(Fragment fragment, @IdRes int containerViewId, @Nullable String tag) {
         FragmentManager     fragmentManager     = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.add(containerViewId, fragment, tag);
         fragmentTransaction.commit();
     }
 
+    //Translate the image sent in the intent into bitmap
     private void writeBitmapToFile(Bitmap bitmapOri, Uri UriOri, File destination) {
         try (FileOutputStream out = new FileOutputStream(destination)) {
             bitmapOri.compress(Bitmap.CompressFormat.JPEG, 100, out);

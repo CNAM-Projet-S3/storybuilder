@@ -93,7 +93,7 @@ public class MenuFragment extends Fragment {
 		buttonText.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				((MainActivity) Objects.requireNonNull(getActivity())).showFragment(new TextFragment(), R.id.editor_content, "text");
+				((MainActivity) Objects.requireNonNull(getActivity())).addFragment(new TextFragment(), R.id.editor_content, "text");
 
 			}
 		});

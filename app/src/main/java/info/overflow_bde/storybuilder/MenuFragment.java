@@ -37,7 +37,7 @@ public class MenuFragment extends Fragment {
 			@Override
 			public void onClick(View v) {
 				stickersListFragment.hidden();
-				exportFragment.hidden();
+				exportFragment.hide();
 			}
 		});
 		this.fragmentTransaction.commit();

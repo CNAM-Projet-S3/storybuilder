@@ -18,7 +18,7 @@ import info.overflow_bde.storybuilder.sticker.PersonalStickerFragment;
 import info.overflow_bde.storybuilder.adapter.StickerAdapter;
 import info.overflow_bde.storybuilder.sticker.WeatherStickerFragment;
 
-public class StickersFragment extends Fragment {
+public class StickersListFragment extends Fragment {
 
     private BottomSheetBehavior behavior;
 

@@ -27,6 +27,9 @@ import java.io.IOException;
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
+
+    public static EditorFragment ef;
+    public static MenuFragment mf;
     final int PICTURE_TAKEN  = 1;
     final int PICTURE_CHOSEN = 2;
     private String currentPhotoPath;

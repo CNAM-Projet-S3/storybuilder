@@ -19,7 +19,7 @@ public class MenuFragment extends Fragment {
 
 	private ExportFragment      exportFragment;
 	private FragmentTransaction fragmentTransaction;
-	private StickersFragment    stickersFragment;
+	private StickersListFragment stickersListFragment;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, final Bundle savedInstanceState) {
@@ -36,7 +36,7 @@ public class MenuFragment extends Fragment {
 		container.findViewById(R.id.editor_content).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				stickersFragment.hidden();
+				stickersListFragment.hidden();
 				exportFragment.hidden();
 			}
 		});
@@ -73,15 +73,15 @@ public class MenuFragment extends Fragment {
 	}
 
 	private void stickersMenuActionButton(View view) {
-		this.stickersFragment = new StickersFragment();
-		this.fragmentTransaction.add(R.id.editor_fragment, this.stickersFragment, "stickers");
+		this.stickersListFragment = new StickersListFragment();
+		this.fragmentTransaction.add(R.id.editor_fragment, this.stickersListFragment, "stickers");
 		FloatingActionButton buttonStickers = (FloatingActionButton) view.findViewById(R.id.editor_sticker);
 
 
 		buttonStickers.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				stickersFragment.show();
+				stickersListFragment.show();
 			}
 		});
 	}
@@ -107,7 +107,7 @@ public class MenuFragment extends Fragment {
 				.commit();
 	}
 
-	public void hidden() {
+	public void hide() {
 		FragmentManager fm = getFragmentManager();
 		fm.beginTransaction()
 				.hide(this)

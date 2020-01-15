@@ -60,7 +60,7 @@ public class LayerFragment extends Fragment {
                 switch (event.getAction() & MotionEvent.ACTION_MASK) {
 
                     case MotionEvent.ACTION_DOWN:
-                        menuFragment.hidden();
+                        menuFragment.hide();
                         RelativeLayout.LayoutParams lParams = (RelativeLayout.LayoutParams)
                                 view.getLayoutParams();
 
@@ -71,7 +71,7 @@ public class LayerFragment extends Fragment {
                         menuFragment.show();
                         break;
                     case MotionEvent.ACTION_MOVE:
-                        menuFragment.hidden();
+                        menuFragment.hide();
                         RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) view
                                 .getLayoutParams();
                         layoutParams.leftMargin = x - xDelta;

@@ -170,7 +170,7 @@ public class InterestPointStickerFragment extends Fragment {
      * @param interestPointEntities
      */
     private void setInterestPointEntities(final ArrayList<InterestPointEntity> interestPointEntities) {
-        this.getActivity().runOnUiThread(new Runnable() {
+        Objects.requireNonNull(this.getActivity()).runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 InterestPointAdapter interestPointAdapter = new InterestPointAdapter(view.getContext(), interestPointEntities);

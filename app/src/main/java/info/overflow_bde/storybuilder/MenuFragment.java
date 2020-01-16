@@ -15,6 +15,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.Objects;
 
+import info.overflow_bde.storybuilder.sticker.CreateStickerFragment;
+
 public class MenuFragment extends Fragment {
 
 	private ExportFragment        exportFragment;

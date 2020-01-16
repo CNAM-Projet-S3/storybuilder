@@ -1,4 +1,4 @@
-package info.overflow_bde.storybuilder;
+package info.overflow_bde.storybuilder.sticker;
 
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -24,6 +24,8 @@ import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
+
+import info.overflow_bde.storybuilder.R;
 
 import static org.opencv.core.CvType.CV_8UC1;
 import static org.opencv.imgproc.Imgproc.COLOR_RGBA2RGB;

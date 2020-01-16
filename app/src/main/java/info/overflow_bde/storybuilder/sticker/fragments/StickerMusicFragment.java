@@ -1,7 +1,6 @@
-package info.overflow_bde.storybuilder;
+package info.overflow_bde.storybuilder.sticker.fragments;
 
 import android.annotation.SuppressLint;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -13,34 +12,31 @@ import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 
-import java.util.Objects;
+import info.overflow_bde.storybuilder.R;
+import info.overflow_bde.storybuilder.entity.MusicEntity;
 
-public class LayerFragment extends Fragment {
+public class StickerMusicFragment extends Fragment {
 
-    private Bitmap icon;
-    private String title;
+    private MusicEntity musicEntity;
     private ViewGroup mainLayout;
-    private MenuFragment menuFragment;
-
 
     private int xDelta;
     private int yDelta;
 
-    public LayerFragment(Bitmap icon, String title) {
-        this.icon = icon;
-        this.title = title;
+    public StickerMusicFragment(MusicEntity me) {
+        this.musicEntity = me;
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        View view = inflater.inflate(R.layout.layer_fragment, container, false);
-        ImageView iv = view.findViewById(R.id.layer_icon);
-        TextView tv = view.findViewById(R.id.layer_title);
-        iv.setImageBitmap(this.icon);
-        tv.setText(this.title);
+        View view = inflater.inflate(R.layout.list_item_music, container, false);
+        ((ImageView)view.findViewById(R.id.item_music_icon)).setImageBitmap(this.musicEntity.icon);
+        ((TextView)view.findViewById(R.id.item_music_title)).setText(this.musicEntity.title);
+        ((TextView)view.findViewById(R.id.item_music_artist)).setText(this.musicEntity.artist);
+
         mainLayout = (RelativeLayout) container.findViewById(R.id.editor_content);
-        menuFragment = (MenuFragment) Objects.requireNonNull(this.getFragmentManager()).findFragmentByTag("menu");
+        //menuFragment = (MenuFragment) Objects.requireNonNull(this.getFragmentManager()).findFragmentByTag("menu");
 
         view.setOnTouchListener(onTouchListener());
         return view;
@@ -60,7 +56,7 @@ public class LayerFragment extends Fragment {
                 switch (event.getAction() & MotionEvent.ACTION_MASK) {
 
                     case MotionEvent.ACTION_DOWN:
-                        menuFragment.hide();
+                        //menuFragment.hide();
                         RelativeLayout.LayoutParams lParams = (RelativeLayout.LayoutParams)
                                 view.getLayoutParams();
 
@@ -68,12 +64,11 @@ public class LayerFragment extends Fragment {
                         yDelta = y - lParams.topMargin;
                         break;
                     case MotionEvent.ACTION_UP:
-                        menuFragment.show();
+                        //menuFragment.show();
                         break;
                     case MotionEvent.ACTION_MOVE:
-                        menuFragment.hide();
-                        RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) view
-                                .getLayoutParams();
+                        //menuFragment.hide();
+                        RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) view.getLayoutParams();
                         layoutParams.leftMargin = x - xDelta;
                         layoutParams.topMargin = y - yDelta;
                         layoutParams.rightMargin = 0;

@@ -39,7 +39,7 @@ public class MenuFragment extends Fragment {
 		container.findViewById(R.id.editor_content).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				stickersListFragment.hidden();
+				stickersListFragment.hide();
 				exportFragment.hide();
 			}
 		});

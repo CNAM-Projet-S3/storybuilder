@@ -13,7 +13,7 @@ import com.google.android.material.tabs.TabLayout;
 
 import info.overflow_bde.storybuilder.sticker.InterestPointStickerFragment;
 import info.overflow_bde.storybuilder.sticker.MovieStickerFragment;
-import info.overflow_bde.storybuilder.sticker.MusicPlayingStickerFragment;
+import info.overflow_bde.storybuilder.sticker.MusicStickerFragment;
 import info.overflow_bde.storybuilder.sticker.PersonalStickerFragment;
 import info.overflow_bde.storybuilder.adapter.StickerAdapter;
 import info.overflow_bde.storybuilder.sticker.WeatherStickerFragment;
@@ -43,7 +43,7 @@ public class StickersListFragment extends Fragment {
         stickerAdapter.addFragment(new PersonalStickerFragment(), "Perso");
         stickerAdapter.addFragment(new InterestPointStickerFragment(), "Points intérets");
         stickerAdapter.addFragment(new WeatherStickerFragment(), "Météo");
-        stickerAdapter.addFragment(new MusicPlayingStickerFragment(), "Music en cours");
+        stickerAdapter.addFragment(new MusicStickerFragment(), "Musique");
         stickerAdapter.addFragment(new MovieStickerFragment(), "Films");
 
         viewPager.setAdapter(stickerAdapter);
@@ -58,7 +58,7 @@ public class StickersListFragment extends Fragment {
         }
     }
 
-    public void hidden() {
+    public void hide() {
         if (this.behavior.getState() != BottomSheetBehavior.STATE_HIDDEN) {
             this.behavior.setState(BottomSheetBehavior.STATE_HIDDEN);
         }

@@ -35,7 +35,7 @@ import java.util.Objects;
 
 import javax.net.ssl.HttpsURLConnection;
 
-import info.overflow_bde.storybuilder.LayerFragment;
+import info.overflow_bde.storybuilder.sticker.fragments.InterestPointFragment;
 import info.overflow_bde.storybuilder.MainActivity;
 import info.overflow_bde.storybuilder.R;
 import info.overflow_bde.storybuilder.StickersListFragment;
@@ -74,8 +74,8 @@ public class InterestPointStickerFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 InterestPointEntity o                = (InterestPointEntity) interestPointList.getItemAtPosition(position);
                 StickersListFragment stickersListFragment = (StickersListFragment) Objects.requireNonNull(getFragmentManager()).findFragmentByTag("stickers");
-                Objects.requireNonNull(stickersListFragment).hidden();
-                ((MainActivity) Objects.requireNonNull(getActivity())).addFragment(new LayerFragment(o.icon, o.title), R.id.editor_content, o.title);
+                Objects.requireNonNull(stickersListFragment).hide();
+                ((MainActivity) Objects.requireNonNull(getActivity())).addFragment(new InterestPointFragment(o.icon, o.title), R.id.editor_content, o.title);
             }
         });
 

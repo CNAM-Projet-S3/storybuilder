@@ -5,7 +5,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
+import android.media.AudioManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.JsonReader;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,15 +19,31 @@ import android.widget.ProgressBar;
 
 import androidx.fragment.app.Fragment;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
+
+import javax.net.ssl.HttpsURLConnection;
 
 import info.overflow_bde.storybuilder.MainActivity;
 import info.overflow_bde.storybuilder.R;
 import info.overflow_bde.storybuilder.StickersListFragment;
 import info.overflow_bde.storybuilder.adapter.MusicAdapter;
+import info.overflow_bde.storybuilder.entity.InterestPointEntity;
 import info.overflow_bde.storybuilder.entity.MusicEntity;
 import info.overflow_bde.storybuilder.sticker.fragments.StickerMusicFragment;
+import info.overflow_bde.storybuilder.utils.HTTPUtils;
+import info.overflow_bde.storybuilder.utils.SimpleCallback;
 
 public class MusicStickerFragment extends Fragment {
 
@@ -52,7 +71,7 @@ public class MusicStickerFragment extends Fragment {
 
         getActivity().registerReceiver(mReceiver, iF);
 
-        //click on interest point item, hidden menu stickers and display selected interest point
+        // When clicking the item, pop it up on the frame
         this.musicList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -62,6 +81,11 @@ public class MusicStickerFragment extends Fragment {
                 ((MainActivity) getActivity()).addFragment(new StickerMusicFragment(me), R.id.editor_content, me.title);
             }
         });
+
+        AudioManager am = (AudioManager) getActivity().getSystemService(Context.AUDIO_SERVICE);
+        if (am.isMusicActive()) {
+
+        }
 
         return view;
     }
@@ -76,10 +100,7 @@ public class MusicStickerFragment extends Fragment {
             String artist = intent.getStringExtra("artist");
             String track = intent.getStringExtra("track");
 
-            ArrayList<MusicEntity> al = new ArrayList<>();
-            al.add(new MusicEntity(track, artist, Bitmap.createBitmap(10, 10, Bitmap.Config.ARGB_8888)));
-
-            setMusicEntities(al);
+            fetchInfos(new MusicEntity(track, artist, Bitmap.createBitmap(10, 10, Bitmap.Config.ARGB_8888)));
         }
     };
 
@@ -93,4 +114,27 @@ public class MusicStickerFragment extends Fragment {
             }
         });
     }
+
+    private void fetchInfos(MusicEntity me) {
+
+        Map<String, String> map = new HashMap<>();
+        map.put("Artist", me.artist);
+        map.put("Title", me.title);
+
+        HTTPUtils.executeHttpRequest("https://story.overflow-bde.info/spotify", map, new SimpleCallback() {
+            @Override
+            public void callback(String resp) throws JSONException {
+                ArrayList<MusicEntity> mes = new ArrayList<>();
+                JSONObject obj = new JSONObject(resp);
+                Bitmap mp = HTTPUtils.getBitmapFromURL(obj.getString("Cover"));
+                MusicEntity me = new MusicEntity(obj.getString("Title"), obj.getString("Artist"), mp);
+                mes.add(me);
+
+                MusicStickerFragment.this.setMusicEntities(mes);
+            }
+        });
+
+
+    }
 }
+

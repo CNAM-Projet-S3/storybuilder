@@ -1,7 +1,10 @@
 package info.overflow_bde.storybuilder;
 
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,13 +16,16 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+
 import java.util.Objects;
+
 
 public class MenuFragment extends Fragment {
 
 	private ExportFragment      exportFragment;
 	private FragmentTransaction fragmentTransaction;
 	private StickersListFragment stickersListFragment;
+	//private CanvasFragment canvasFragment;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, final Bundle savedInstanceState) {
@@ -32,6 +38,7 @@ public class MenuFragment extends Fragment {
 		this.exitMenuActionButton(view);
 		this.stickersMenuActionButton(view);
 		this.textsMenuActionButton(view);
+		this.drawMenuActionButton(view);
 		//hidden action menu
 		container.findViewById(R.id.editor_content).setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -97,6 +104,26 @@ public class MenuFragment extends Fragment {
 
 			}
 		});
+	}
+
+	private void drawMenuActionButton(View view) {
+		final FloatingActionButton buttonDraw = view.findViewById(R.id.editor_draw);
+        final DrawFragment df = new DrawFragment();
+        ((MainActivity) Objects.requireNonNull(getActivity())).addFragment(df, R.id.editor_content, "draw");
+       // this.fragmentTransaction.add(R.id.editor_fragment, this.stickersListFragment, "stickers");
+        buttonDraw.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(df.isEnable()){
+                    int color =  Color.parseColor("#A7B6BC");
+                    buttonDraw.setBackgroundTintList(ColorStateList.valueOf(color));
+                    df.setEnable(false);
+                }else {
+                    buttonDraw.setBackgroundTintList(ColorStateList.valueOf(Color.RED));
+                    df.setEnable(true);
+                }
+            }
+        });
 	}
 
 	public void show() {

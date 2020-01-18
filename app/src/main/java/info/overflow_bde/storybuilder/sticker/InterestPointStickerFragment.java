@@ -5,14 +5,11 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.JsonReader;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,23 +21,23 @@ import android.widget.ProgressBar;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
-import javax.net.ssl.HttpsURLConnection;
-
-import info.overflow_bde.storybuilder.sticker.fragments.InterestPointFragment;
 import info.overflow_bde.storybuilder.MainActivity;
 import info.overflow_bde.storybuilder.R;
 import info.overflow_bde.storybuilder.StickersListFragment;
 import info.overflow_bde.storybuilder.adapter.InterestPointAdapter;
 import info.overflow_bde.storybuilder.entity.InterestPointEntity;
+import info.overflow_bde.storybuilder.sticker.fragments.InterestPointFragment;
+import info.overflow_bde.storybuilder.utils.HTTPUtils;
+import info.overflow_bde.storybuilder.utils.SimpleCallback;
 
 import static androidx.core.content.PermissionChecker.checkSelfPermission;
 
@@ -86,82 +83,27 @@ public class InterestPointStickerFragment extends Fragment {
      * call api here to fetch interest points from position
      */
     private void fetchInterestPoints(final Location location) {
-        AsyncTask.execute(new Runnable() {
+        Map<String, String> map = new HashMap<>();
+        map.put("Longitude", location.getLongitude() + "");
+        map.put("Latitude", location.getLatitude() + "");
+
+        HTTPUtils.executeHttpRequest("https://story.overflow-bde.info/here", map, new SimpleCallback() {
             @Override
-            public void run() {
-                // Create URL
-                URL interestPointEndpoint = null;
-                try {
-                    interestPointEndpoint = new URL("https://places.cit.api.here.com/places/v1/discover/around?app_id=BtwXteauhryQRC1XteJR&app_code=Rwpnxvb-uv6B1ipbqcfXkQ&at=" + location.getLatitude() + "," + location.getLongitude());
-                } catch (MalformedURLException e) {
-                    e.printStackTrace();
+            public void callback(String response) throws JSONException {
+                ArrayList<InterestPointEntity> entities = new ArrayList<>();
+
+                JSONObject resp = new JSONObject(response);
+                JSONArray arr = resp.getJSONArray("items");
+                for (int i = 0; i < arr.length(); i++) {
+                    JSONObject currObj = arr.getJSONObject(i);
+
+                    Bitmap bm = HTTPUtils.getBitmapFromURL(currObj.getString("icon"));
+                    entities.add(new InterestPointEntity(currObj.getString("title"), bm));
                 }
 
-                // Create connection
-                try {
-                    HttpsURLConnection myConnection = (HttpsURLConnection) interestPointEndpoint.openConnection();
-
-                    if (myConnection.getResponseCode() == 200) {
-                        //populate list view
-                        Log.i("InterestPoint", "success fetch interest point");
-                        InputStream responseBody = myConnection.getInputStream();
-                        setInterestPointEntities(readJsonStream(responseBody));
-                    } else {
-                        Log.i("InterestPoint", "error fetch interest point");
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                setInterestPointEntities(entities);
             }
         });
-    }
-
-    /**
-     * create interest point entity
-     *
-     * @param reader
-     * @return InterestPointEntity
-     * @throws IOException
-     */
-    private InterestPointEntity readInterestPoint(JsonReader reader) throws IOException {
-        String title = null;
-        String icon  = null;
-
-        reader.beginObject();
-        while (reader.hasNext()) {
-            String name = reader.nextName();
-            if (name.equals("title")) {
-                title = reader.nextString();
-            } else if (name.equals("icon")) {
-                icon = reader.nextString();
-            } else {
-                reader.skipValue();
-            }
-        }
-        reader.endObject();
-        return new InterestPointEntity(title, this.getBitmapFromURL(icon));
-    }
-
-
-    /**
-     * fetch bitmap from url
-     *
-     * @param src
-     * @return Bitmap | null
-     */
-    private Bitmap getBitmapFromURL(String src) {
-        try {
-            URL               url        = new URL(src);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setDoInput(true);
-            connection.connect();
-            InputStream input    = connection.getInputStream();
-            Bitmap      myBitmap = BitmapFactory.decodeStream(input);
-            return myBitmap;
-        } catch (IOException e) {
-            // Log exception
-            return null;
-        }
     }
 
     /**
@@ -179,59 +121,6 @@ public class InterestPointStickerFragment extends Fragment {
                 circleProgress.setVisibility(View.GONE);
             }
         });
-    }
-
-    /**
-     * Parse interest point response
-     *
-     * @param in InputStream
-     * @return ArrayList<InterestPointEntity>
-     * @throws IOException
-     */
-    private ArrayList<InterestPointEntity> readJsonStream(InputStream in) throws IOException {
-        JsonReader                     reader                = new JsonReader(new InputStreamReader(in, "UTF-8"));
-        ArrayList<InterestPointEntity> interestPointEntities = new ArrayList<>();
-        try {
-            reader.beginObject();
-            while (reader.hasNext()) {
-                String name = reader.nextName();
-                if (name.equals("results")) {
-                    reader.beginObject();
-                    while (reader.hasNext()) {
-                        name = reader.nextName();
-                        if (name.equals("items")) {
-                            interestPointEntities = readInterestPointsArray(reader);
-                        } else {
-                            reader.skipValue();
-                        }
-                    }
-
-                } else {
-                    reader.skipValue();
-                }
-            }
-            reader.endObject();
-        } finally {
-            reader.close();
-        }
-        return interestPointEntities;
-    }
-
-    /**
-     * cross eah interest points
-     *
-     * @param reader JsonReader
-     * @return ArrayList<InterestPointEntity>
-     * @throws IOException
-     */
-    private ArrayList<InterestPointEntity> readInterestPointsArray(JsonReader reader) throws IOException {
-        ArrayList<InterestPointEntity> interestPointEntities = new ArrayList<>();
-        reader.beginArray();
-        while (reader.hasNext()) {
-            interestPointEntities.add(readInterestPoint(reader));
-        }
-        reader.endArray();
-        return interestPointEntities;
     }
 
     /**

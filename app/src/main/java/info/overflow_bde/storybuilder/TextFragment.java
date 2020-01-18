@@ -129,19 +129,6 @@ public class TextFragment extends Fragment {
 			buttonTextColor.setVisibility(View.VISIBLE);
 		else {
 			buttonTextColor.setVisibility(View.INVISIBLE);
-			try{
-				String text =editText.getText().toString();
-				if(text.equals("")){
-					this.mainLayout.setOnClickListener(null);
-					this.editText.setOnFocusChangeListener(null);
-					this.buttonTextColor.setOnClickListener(null);
-					this.getActivity().getSupportFragmentManager().beginTransaction().
-					remove(this.getActivity().getSupportFragmentManager().findFragmentById(this.getId())).commit();
-				}
-			}
-			catch(Exception e){
-				Log.i("exception", e.getMessage());
-			}
 		}
 
 

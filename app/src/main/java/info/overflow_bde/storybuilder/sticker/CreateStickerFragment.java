@@ -1,10 +1,13 @@
 package info.overflow_bde.storybuilder.sticker;
 
 import android.annotation.SuppressLint;
+import android.content.ContentValues;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -13,6 +16,7 @@ import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -28,6 +32,7 @@ import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
+import java.io.ByteArrayOutputStream;
 import java.math.BigInteger;
 import java.util.Objects;
 
@@ -35,6 +40,7 @@ import info.overflow_bde.storybuilder.MainActivity;
 import info.overflow_bde.storybuilder.MenuFragment;
 import info.overflow_bde.storybuilder.R;
 import info.overflow_bde.storybuilder.sticker.fragments.PersonalFragment;
+import info.overflow_bde.storybuilder.utils.DB.PersonalSticker;
 
 import static org.opencv.core.CvType.CV_8UC1;
 import static org.opencv.core.CvType.CV_8UC3;
@@ -185,12 +191,48 @@ public class CreateStickerFragment extends Fragment implements OnTouchListener {
 				this.isEnabled = false;
 				this.menuFragment.show();
 
-				//@TODO show editor content
+				//@TODO hide editor content
 
-				//@TODO save to database
+				//save selection grap to database
+				this.saveInDatabase(finalBitmap);
+
+				//warn user
+				Toast t = Toast.makeText(this.getActivity(), "Succès", Toast.LENGTH_SHORT);
+				t.show();
 			}
 		}
 		return true;
 	}
 
+	/**
+	 * Save selection to personal sticker database
+	 *
+	 * @param bitmap
+	 * @return
+	 */
+	private void saveInDatabase(Bitmap bitmap) {
+		PersonalSticker.PersonalStickerDbHelper dbHelper = new PersonalSticker.PersonalStickerDbHelper(getContext());
+
+		// Gets the data repository in write mode
+		SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+		// Create a new map of values, where column names are the keys
+		ContentValues values = new ContentValues();
+		values.put(PersonalSticker.PersonalStickerEntry.COLUMN_NAME_IMAGE, this.convertBitmapToBase64(bitmap));
+
+		// Insert the new row, returning the primary key value of the new row
+		db.insert(PersonalSticker.PersonalStickerEntry.TABLE_NAME, null, values);
+	}
+
+	/**
+	 * Convert Bitmap to base64
+	 *
+	 * @param bitmap
+	 * @return
+	 */
+	private String convertBitmapToBase64(Bitmap bitmap) {
+		ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+		bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
+		return Base64.encodeToString(byteArrayOutputStream.toByteArray(), Base64.DEFAULT);
+	}
 }

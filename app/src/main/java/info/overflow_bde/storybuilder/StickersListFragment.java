@@ -11,11 +11,11 @@ import androidx.viewpager.widget.ViewPager;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.tabs.TabLayout;
 
+import info.overflow_bde.storybuilder.adapter.StickerAdapter;
 import info.overflow_bde.storybuilder.sticker.InterestPointStickerFragment;
 import info.overflow_bde.storybuilder.sticker.MovieStickerFragment;
 import info.overflow_bde.storybuilder.sticker.MusicStickerFragment;
 import info.overflow_bde.storybuilder.sticker.PersonalStickerFragment;
-import info.overflow_bde.storybuilder.adapter.StickerAdapter;
 import info.overflow_bde.storybuilder.sticker.WeatherStickerFragment;
 
 public class StickersListFragment extends Fragment {
@@ -30,14 +30,13 @@ public class StickersListFragment extends Fragment {
         this.behavior = BottomSheetBehavior.from(bottomSheetBehavior);
         this.behavior.setState(BottomSheetBehavior.STATE_HIDDEN);
 
-        this.configTabs(view);
-
         return view;
     }
 
-    private void configTabs(View view) {
+    private void configTabs() {
+        View      view      = this.getView();
         ViewPager viewPager = view.findViewById(R.id.viewPager);
-        TabLayout tabs      = (TabLayout) view.findViewById(R.id.tabs_stickers);
+        TabLayout tabs      = view.findViewById(R.id.tabs_stickers);
 
         StickerAdapter stickerAdapter = new StickerAdapter(getFragmentManager());
         stickerAdapter.addFragment(new PersonalStickerFragment(), "Perso");
@@ -55,6 +54,7 @@ public class StickersListFragment extends Fragment {
     public void show() {
         if (this.behavior.getState() != BottomSheetBehavior.STATE_EXPANDED) {
             this.behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+            this.configTabs();
         }
     }
 

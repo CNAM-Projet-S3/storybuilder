@@ -1,10 +1,11 @@
 package info.overflow_bde.storybuilder.sticker;
 
+import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
+import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -13,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import org.opencv.android.OpenCVLoader;
@@ -23,31 +25,35 @@ import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
+import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
+import java.math.BigInteger;
+import java.util.Objects;
+
+import info.overflow_bde.storybuilder.MainActivity;
+import info.overflow_bde.storybuilder.MenuFragment;
 import info.overflow_bde.storybuilder.R;
+import info.overflow_bde.storybuilder.sticker.fragments.PersonalFragment;
 
 import static org.opencv.core.CvType.CV_8UC1;
-import static org.opencv.imgproc.Imgproc.COLOR_RGBA2RGB;
+import static org.opencv.core.CvType.CV_8UC3;
 import static org.opencv.imgproc.Imgproc.GC_INIT_WITH_RECT;
 import static org.opencv.imgproc.Imgproc.boundingRect;
 import static org.opencv.imgproc.Imgproc.circle;
 import static org.opencv.imgproc.Imgproc.cvtColor;
+import static org.opencv.imgproc.Imgproc.resize;
 
 public class CreateStickerFragment extends Fragment implements OnTouchListener {
 
 
-	RelativeLayout editorLayout;
-	ImageView      imageView;
-	boolean        isEnabled;
-	Mat            image;
-	Mat            originalImage;
-	Bitmap         bitmap;
-	Mat            mask;
-	//	Mat            bgdModel;
-//	Mat            fgdModel;
-	Rect           rect;
-	Mat            source = new Mat(1, 1, CvType.CV_8U, new Scalar(Imgproc.GC_PR_FGD));
+	private ImageView    imageView;
+	private boolean      isEnabled;
+	private Mat          image;
+	private Mat          originalImage;
+	private Bitmap       bitmap;
+	private Mat          mask;
+	private MenuFragment menuFragment;
 
 	static {
 		if (!OpenCVLoader.initDebug()) {
@@ -55,95 +61,136 @@ public class CreateStickerFragment extends Fragment implements OnTouchListener {
 		}
 	}
 
+	@SuppressLint("ClickableViewAccessibility")
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, final Bundle savedInstanceState) {
-		this.editorLayout = getActivity().findViewById(R.id.editor_content);
+	public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, final Bundle savedInstanceState) {
+		RelativeLayout editorLayout = Objects.requireNonNull(getActivity()).findViewById(R.id.editor_content);
 		this.imageView = getActivity().findViewById(R.id.image_view_editor);
-		this.editorLayout.setOnTouchListener(this);
+		editorLayout.setOnTouchListener(this);
+		this.menuFragment = (MenuFragment) this.getActivity().getSupportFragmentManager().findFragmentByTag("menu");
 		this.isEnabled = false;
-		bitmap = ((BitmapDrawable) this.imageView.getDrawable()).getBitmap();
-		image = new Mat();
-		originalImage = new Mat();
-		Utils.bitmapToMat(bitmap, originalImage);
-		Utils.bitmapToMat(bitmap, image);
-		rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
-//		rect = new Rect();
-		mask = new Mat(image.size(), CV_8UC1, new Scalar(0, 0, 0));
-//		mask = new Mat();
-//		bgdModel = new Mat();
-//		fgdModel = new Mat();
+
 		return getView();
 	}
 
 	public void init() {
-		Log.i("create_stciker", "initialisation");
-		System.out.println("hola");
+		Log.i("create_sticker", "initialisation");
+		// hide menu
+		this.menuFragment.hide();
 
+		//@TODO hide editor content
+
+		// enabled on touch listner
 		this.isEnabled = true;
-	}
 
-	public void exit() {
-		this.isEnabled = false;
+		// init variables for grabcut process
+		this.bitmap = ((BitmapDrawable) this.imageView.getDrawable()).getBitmap();
+		this.image = new Mat();
+		Utils.bitmapToMat(this.bitmap, this.image);
+		this.originalImage = this.image.clone();
+		this.mask = new Mat(image.size(), CV_8UC1, new Scalar(0, 0, 0));
 	}
-
 
 	@Override
 	public boolean onTouch(View v, MotionEvent event) {
+		if (this.isEnabled) {
+			if (event.getAction() != MotionEvent.ACTION_UP) {
 
-		if (event.getAction() != MotionEvent.ACTION_UP) {
-			// get screen size
-			Display                display = this.getActivity().getWindowManager().getDefaultDisplay();
-			android.graphics.Point size    = new android.graphics.Point();
-			display.getSize(size);
-			Log.i("create_sticker", "touch --> x=" + event.getX() + "  ,y=" + event.getY());
-			Log.i("create_sticker", "screenSize --> x=" + size.x + "  ,y=" + size.y);
-			Log.i("create_sticker", "imageSize --> x=" + image.width() + "  ,y=" + image.height());
-			Log.i("create_sticker", "new touch --> x=" + ((event.getX() * image.width()) / size.x) + "  ,y=" + ((event.getY() * image.height()) / size.y));
+				// logs
+				Log.i("create_sticker", "touch --> x=" + event.getX() + "  ,y=" + event.getY());
+				Log.i("create_sticker", "imageSize --> x=" + this.image.width() + "  ,y=" + this.image.height());
 
-			Point tapPoint = new Point((event.getX() * image.width()) / size.x, (event.getY() * image.height()) / size.y);
-			circle(image, tapPoint, 15, new Scalar(0, 0, 0), -1);
-			circle(mask, tapPoint, 15, new Scalar(255, 0, 255), -1);
-			Utils.matToBitmap(image, bitmap);
-			imageView.setImageBitmap(bitmap);
-		} else {
-			//create rectangle from selection
-			Rect rect = boundingRect(mask);
-			Log.i("create_sticker", "rect : x = " + rect.x + " y =" + rect.y + " width =" + rect.width + " height = " + rect.height);
-			//test where is the rectangle
-//			rectangle(image, rect, new Scalar(0,0,255));
-			cvtColor(originalImage, originalImage, COLOR_RGBA2RGB, 0);
-			mask = new Mat(rect.size(), CV_8UC1);
-			Imgproc.grabCut(originalImage, mask, rect, new Mat(), new Mat(), 3, GC_INIT_WITH_RECT);
+				// to determine thichness
+				int nbPixelBitmap = bitmap.getWidth() * bitmap.getHeight();
+				int nbPixelView   = imageView.getWidth() * imageView.getHeight();
 
-			//draw foreground
-			// Get a mask for all `1` values in matrix.
-			Mat mask1vals = new Mat();
-			Core.compare(mask, new Scalar(1), mask1vals, Core.CMP_EQ);
+				// radius = (900*nbPixelBitmap)/nbPixelView;
+				// determine radius from aera of 6400 (circle 80px*80px)
+				BigInteger nbPixelBitmapBig = new BigInteger(BigInteger.valueOf(nbPixelBitmap).toByteArray());
+				BigInteger aeraBig          = new BigInteger(BigInteger.valueOf(6400).toByteArray());
 
-			// Get a mask for all `3` values in matrix.
-			Mat mask3vals = new Mat();
-			Core.compare(mask, new Scalar(3), mask3vals, Core.CMP_EQ);
+				BigInteger multiplied = nbPixelBitmapBig.multiply(aeraBig);
+				BigInteger divided    = multiplied.divide(new BigInteger(BigInteger.valueOf(nbPixelView).toByteArray()));
+				double     radius     = Math.sqrt(divided.doubleValue() / Math.PI);
 
-			// Create a combined mask
-			Mat foregroundMask = new Mat();
-			Core.max(mask1vals, mask3vals, foregroundMask);
+				// calculate inverse matrix
+				Matrix inverse = new Matrix();
+				imageView.getImageMatrix().invert(inverse);
 
-			// First convert the single channel mat to 3 channel mat
-			Imgproc.cvtColor(foregroundMask, foregroundMask, Imgproc.COLOR_GRAY2BGR);
+				// map touch point from ImageView to image
+				float[] touchPoint = new float[] {event.getX(), event.getY()};
+				inverse.mapPoints(touchPoint);
+				// touchPoint now contains x and y in image's coordinate system
+				Point tapPoint = new Point(touchPoint[0], touchPoint[1]);
+				Log.i("create_sticker", "naturalImage --> x=" + (this.image.width() / this.imageView.getWidth()) * event.getX() + "  ,y=" + (this.image.height() / this.imageView.getHeight()) * event.getY());
 
-			// Now simply take min operation
-			Mat out = new Mat(rect.size(), CV_8UC1);
-			Core.min(foregroundMask, originalImage, out);
+				//draw circle according to user selection to the image from image view
+				circle(image, tapPoint, (int) radius, new Scalar(255, 255, 255), -1);
 
-			// Crop the region of interest using above rect
-			Mat finalImage = new Mat(out, rect);
+				//draw circle according to user selection for grabcut processing
+				circle(mask, tapPoint, (int) radius, new Scalar(255, 255, 255), -1);
 
-			Bitmap finalBitmap = Bitmap.createBitmap(finalImage.width(), finalImage.height(), Bitmap.Config.ARGB_8888);
-			Utils.matToBitmap(finalImage, finalBitmap);
-			imageView.setImageBitmap(finalBitmap);
+				Utils.matToBitmap(this.image, this.bitmap);
+				imageView.setImageBitmap(bitmap);
+			} else {
+
+				//set original image during the processing
+				Utils.matToBitmap(originalImage, bitmap);
+				imageView.setImageBitmap(bitmap);
+
+				//create rectangle from selection
+				Rect rect = boundingRect(mask);
+				Log.i("create_sticker", "rect : x = " + rect.x + " y =" + rect.y + " width =" + rect.width + " height = " + rect.height);
+
+				//remove alpha chanel
+				Mat originalImageNoAlpha = new Mat();
+				cvtColor(originalImage, originalImageNoAlpha, Imgproc.COLOR_RGBA2RGB);
+
+				//resize image and select rect to grabcut
+				int  scalePercent   = 25; // percent of original size
+				int  newWidthImage  = originalImage.width() * scalePercent / 100;
+				int  newHeightImage = originalImage.height() * scalePercent / 100;
+				int  newWidthRect   = rect.width * scalePercent / 100;
+				int  newHeightRect  = rect.height * scalePercent / 100;
+				int  newXRect       = rect.x * scalePercent / 100;
+				int  newYRect       = rect.y * scalePercent / 100;
+				Rect newRec         = new Rect(newXRect, newYRect, newWidthRect, newHeightRect);
+				resize(originalImageNoAlpha, originalImageNoAlpha, new Size(newWidthImage, newHeightImage));
+
+				//process grabcut
+				Imgproc.grabCut(originalImageNoAlpha, mask, newRec, new Mat(), new Mat(), 5, GC_INIT_WITH_RECT);
+
+				//resize mask to apply to original image
+				resize(mask, mask, new Size(originalImage.width(), originalImage.height()));
+
+				// extract selection from mask
+				Mat imageExtract = new Mat(1, 1, CvType.CV_8U, new Scalar(3.0));
+				Core.compare(mask, imageExtract, mask, Core.CMP_EQ);
+
+				// alpha channel
+				Mat imageAlpha = new Mat(originalImage.size(), CV_8UC3, new Scalar(255, 255, 255, 255));
+				originalImage.copyTo(imageAlpha, mask);
+
+				// Crop the region of interest using above rect
+				Mat finalImage = new Mat(imageAlpha, rect);
+
+				// create final bitmap
+				Bitmap finalBitmap = Bitmap.createBitmap(finalImage.width(), finalImage.height(), Bitmap.Config.ARGB_8888);
+				Utils.matToBitmap(finalImage, finalBitmap);
+
+				// add image to movable fragment
+				((MainActivity) Objects.requireNonNull(getActivity())).addFragment(new PersonalFragment(finalBitmap), R.id.editor_content, "personal");
+
+				// disabled selection
+				this.isEnabled = false;
+				this.menuFragment.show();
+
+				//@TODO show editor content
+
+				//@TODO save to database
+			}
 		}
 		return true;
 	}
-
 
 }

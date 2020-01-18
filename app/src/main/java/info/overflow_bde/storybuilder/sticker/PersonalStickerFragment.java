@@ -46,7 +46,6 @@ public class PersonalStickerFragment extends Fragment {
 
         //click on personal sticker item, hidden menu stickers and display selected interest point
         this.personalStickerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 PersonalEntity       personalEntity       = (PersonalEntity) personalStickerList.getItemAtPosition(position);
                 StickersListFragment stickersListFragment = (StickersListFragment) Objects.requireNonNull(getFragmentManager()).findFragmentByTag("stickers");
@@ -54,6 +53,7 @@ public class PersonalStickerFragment extends Fragment {
                 ((MainActivity) Objects.requireNonNull(getActivity())).addFragment(new PersonalFragment(personalEntity.image), R.id.editor_content, personalEntity.title);
             }
         });
+
         return view;
     }
 
@@ -82,10 +82,11 @@ public class PersonalStickerFragment extends Fragment {
 
         ArrayList<PersonalEntity> personalEntities = new ArrayList<>();
         while (cursor.moveToNext()) {
+            long   id    = cursor.getLong(cursor.getColumnIndexOrThrow(PersonalSticker.PersonalStickerEntry._ID));
             String image = cursor.getString(cursor.getColumnIndexOrThrow(PersonalSticker.PersonalStickerEntry.COLUMN_NAME_IMAGE));
             String date  = cursor.getString(cursor.getColumnIndexOrThrow(PersonalSticker.PersonalStickerEntry.COLUMN_NAME_CREATED_AT));
 
-            personalEntities.add(new PersonalEntity(date, this.getBitmapFromBase64String(image)));
+            personalEntities.add(new PersonalEntity(id, date, this.getBitmapFromBase64String(image)));
         }
         cursor.close();
 

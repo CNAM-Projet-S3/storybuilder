@@ -1,7 +1,10 @@
 package info.overflow_bde.storybuilder;
 
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +15,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 
 import java.util.Objects;
 
@@ -36,6 +40,8 @@ public class MenuFragment extends Fragment {
 		this.stickersMenuActionButton(view);
 		this.textsMenuActionButton(view);
 		this.createStickerActionButton(view);
+        this.drawMenuActionButton(view);
+		this.restMenuActionButton(view);
 
 		//hidden action menu
 		container.findViewById(R.id.editor_content).setOnClickListener(new View.OnClickListener() {
@@ -103,6 +109,36 @@ public class MenuFragment extends Fragment {
 			}
 		});
 	}
+
+	private void drawMenuActionButton(View view) {
+		final FloatingActionButton buttonDraw = view.findViewById(R.id.editor_draw);
+        final DrawFragment df = new DrawFragment();
+        ((MainActivity) Objects.requireNonNull(getActivity())).addFragment(df, R.id.editor_content, "draw");
+       // this.fragmentTransaction.add(R.id.editor_fragment, this.stickersListFragment, "stickers");
+        buttonDraw.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(df.isEnable()){
+                    int color =  Color.parseColor("#A7B6BC");
+                    buttonDraw.setBackgroundTintList(ColorStateList.valueOf(color));
+                    df.setEnable(false);
+                }else {
+                    buttonDraw.setBackgroundTintList(ColorStateList.valueOf(Color.RED));
+                    df.setEnable(true);
+                }
+            }
+        });
+	}
+
+    private void restMenuActionButton(View view) {
+        FloatingActionButton buttonText = view.findViewById(R.id.editor_reset);
+        buttonText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                v = null;
+            }
+        });
+    }
 
 	private void createStickerActionButton(View view) {
 		this.createStickerFragment = new CreateStickerFragment();

@@ -39,8 +39,9 @@ public class MenuFragment extends Fragment {
 		this.exitMenuActionButton(view);
 		this.stickersMenuActionButton(view);
 		this.textsMenuActionButton(view);
-		this.drawMenuActionButton(view);
 		this.createStickerActionButton(view);
+        this.drawMenuActionButton(view);
+		this.restMenuActionButton(view);
 
 		//hidden action menu
 		container.findViewById(R.id.editor_content).setOnClickListener(new View.OnClickListener() {
@@ -128,6 +129,16 @@ public class MenuFragment extends Fragment {
             }
         });
 	}
+
+    private void restMenuActionButton(View view) {
+        FloatingActionButton buttonText = view.findViewById(R.id.editor_reset);
+        buttonText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                v = null;
+            }
+        });
+    }
 
 	private void createStickerActionButton(View view) {
 		this.createStickerFragment = new CreateStickerFragment();

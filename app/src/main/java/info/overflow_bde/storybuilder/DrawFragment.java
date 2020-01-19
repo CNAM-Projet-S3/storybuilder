@@ -15,7 +15,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 
 import androidx.fragment.app.Fragment;
 
@@ -30,7 +29,7 @@ public class DrawFragment extends Fragment{
 
     private MenuFragment menuFragment;
     private DrawingView dv;
-    private Paint mPaint;
+    private Paint paint;
     private boolean enable;
     private int color;
     private FloatingActionButton buttonColor;
@@ -46,14 +45,14 @@ public class DrawFragment extends Fragment{
         LinearLayout view = (LinearLayout) inflater.inflate(R.layout.draw_fragment, container, false);
         dv = new DrawingView(this.getContext());
         view.addView(dv);
-        mPaint = new Paint();
-        mPaint.setAntiAlias(true);
-        mPaint.setDither(true);
-        mPaint.setColor(color);
-        mPaint.setStyle(Paint.Style.STROKE);
-        mPaint.setStrokeJoin(Paint.Join.ROUND);
-        mPaint.setStrokeCap(Paint.Cap.ROUND);
-        mPaint.setStrokeWidth(12);
+        paint = new Paint();
+        paint.setAntiAlias(true);
+        paint.setDither(true);
+        paint.setColor(color);
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setStrokeJoin(Paint.Join.ROUND);
+        paint.setStrokeCap(Paint.Cap.ROUND);
+        paint.setStrokeWidth(12);
         Log.i("Draw","onCreateView");
         Log.i("width",String.valueOf(view.getWidth()));
         Log.i("height",String.valueOf(view.getHeight()));
@@ -99,13 +98,13 @@ public class DrawFragment extends Fragment{
                     @Override
                     public void onChooseColor(int position,int color) {
 
-                        mPaint.setColor(color);
+                        paint.setColor(color);
                         buttonColor.setBackgroundTintList(ColorStateList.valueOf(color));
                         DrawFragment.this.color=color;
                     }
                     @Override
                     public void onCancel(){
-                        mPaint.setColor(DrawFragment.this.color);
+                        paint.setColor(DrawFragment.this.color);
                     }
                 });
             }
@@ -116,10 +115,10 @@ public class DrawFragment extends Fragment{
 
         public int width;
         public  int height;
-        private Bitmap  mBitmap;
-        private Canvas  mCanvas;
-        private Path mPath;
-        private Paint mBitmapPaint;
+        private Bitmap bitmap;
+        private Canvas canvas;
+        private Path path;
+        private Paint bitmapPaint;
         Context context;
         private Paint circlePaint;
         private Path circlePath;
@@ -127,8 +126,8 @@ public class DrawFragment extends Fragment{
         public DrawingView(Context c) {
             super(c);
             context=c;
-            mPath = new Path();
-            mBitmapPaint = new Paint(Paint.DITHER_FLAG);
+            path = new Path();
+            bitmapPaint = new Paint(Paint.DITHER_FLAG);
             circlePaint = new Paint();
             circlePath = new Path();
             circlePaint.setAntiAlias(true);
@@ -142,17 +141,17 @@ public class DrawFragment extends Fragment{
         protected void onSizeChanged(int w, int h, int oldw, int oldh) {
             super.onSizeChanged(w, h, oldw, oldh);
 
-            mBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
-            mCanvas = new Canvas(mBitmap);
+            bitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+            canvas = new Canvas(bitmap);
         }
 
         @Override
         protected void onDraw(Canvas canvas) {
             super.onDraw(canvas);
 
-            canvas.drawBitmap( mBitmap, 0, 0, mBitmapPaint);
-            canvas.drawPath( mPath, mPaint);
-            canvas.drawPath( circlePath,  mPaint);
+            canvas.drawBitmap(bitmap, 0, 0, bitmapPaint);
+            canvas.drawPath(path, paint);
+            canvas.drawPath( circlePath, paint);
         }
 
         private float mX, mY;
@@ -160,8 +159,8 @@ public class DrawFragment extends Fragment{
 
         private void touch_start(float x, float y) {
             circlePaint.setColor(color);
-            mPath.reset();
-            mPath.moveTo(x, y);
+            path.reset();
+            path.moveTo(x, y);
             mX = x;
             mY = y;
             menuFragment.hide();
@@ -171,7 +170,7 @@ public class DrawFragment extends Fragment{
             float dx = Math.abs(x - mX);
             float dy = Math.abs(y - mY);
             if (dx >= TOUCH_TOLERANCE || dy >= TOUCH_TOLERANCE) {
-                mPath.quadTo(mX, mY, (x + mX)/2, (y + mY)/2);
+                path.quadTo(mX, mY, (x + mX)/2, (y + mY)/2);
                 mX = x;
                 mY = y;
 
@@ -181,12 +180,12 @@ public class DrawFragment extends Fragment{
         }
 
         private void touch_up() {
-            mPath.lineTo(mX, mY);
+            path.lineTo(mX, mY);
             circlePath.reset();
             // commit the path to our offscreen
-            mCanvas.drawPath(mPath,  circlePaint);
+            canvas.drawPath(path,  circlePaint);
             // kill this so we don't double draw
-            mPath.reset();
+            path.reset();
             menuFragment.show();
         }
 

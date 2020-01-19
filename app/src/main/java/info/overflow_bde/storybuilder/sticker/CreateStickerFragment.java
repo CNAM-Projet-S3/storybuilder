@@ -70,13 +70,14 @@ public class CreateStickerFragment extends Fragment implements OnTouchListener {
 	@SuppressLint("ClickableViewAccessibility")
 	@Override
 	public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, final Bundle savedInstanceState) {
-		RelativeLayout editorLayout = Objects.requireNonNull(getActivity()).findViewById(R.id.editor_content);
+		View           view                = inflater.inflate(R.layout.create_sticker_fragment, container, false);
+		RelativeLayout createStickerLayout = Objects.requireNonNull(getActivity()).findViewById(R.id.editor_content);
 		this.imageView = getActivity().findViewById(R.id.image_view_editor);
-		editorLayout.setOnTouchListener(this);
+		view.setOnTouchListener(this);
 		this.menuFragment = (MenuFragment) this.getActivity().getSupportFragmentManager().findFragmentByTag("menu");
 		this.isEnabled = false;
 
-		return getView();
+		return view;
 	}
 
 	public void init() {

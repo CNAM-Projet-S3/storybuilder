@@ -106,7 +106,7 @@ public class MenuFragment extends Fragment {
 
 	private void createStickerActionButton(View view) {
 		this.createStickerFragment = new CreateStickerFragment();
-		this.fragmentTransaction.add(R.id.editor_fragment, this.createStickerFragment, "create-sticker");
+		this.fragmentTransaction.add(R.id.editor_content, this.createStickerFragment, "create-sticker");
 		FloatingActionButton buttonCreateSticker = view.findViewById(R.id.editor_create_sticker);
 		buttonCreateSticker.setOnClickListener(new View.OnClickListener() {
 			@Override

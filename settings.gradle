@@ -1,2 +1,2 @@
-include ':app'
+include ':app', ':openCVLibrary2411'
 rootProject.name='storybuilder'

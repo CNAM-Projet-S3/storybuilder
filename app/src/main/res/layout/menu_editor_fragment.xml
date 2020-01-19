@@ -74,7 +74,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="3dp"
-            app:srcCompat="@drawable/ic_text_fields_black_24dp" />
+            app:srcCompat="@drawable/ic_textsms_black_24dp" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/editor_create_sticker"
@@ -83,6 +83,15 @@
             android:layout_height="wrap_content"
             android:layout_margin="3dp"
             app:srcCompat="@drawable/ic_note_add_black_24dp" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/editor_color_text"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="3dp"
+            android:visibility="invisible"
+            app:srcCompat="@drawable/ic_format_paint_black_24dp"  />
+
 
         <RelativeLayout
             android:layout_width="match_parent"

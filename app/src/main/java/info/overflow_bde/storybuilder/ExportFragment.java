@@ -9,6 +9,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +18,7 @@ import android.widget.Toast;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 import androidx.core.content.IntentCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -41,7 +43,6 @@ public class ExportFragment extends Fragment {
 
         this.setButtonShareAndSave(view);
 
-
         return view;
     }
 
@@ -51,15 +52,14 @@ public class ExportFragment extends Fragment {
         buttonShare.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                System.out.println("share");
+                takeScreenshotUglyHack(true);
             }
         });
 
         buttonSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                takeScreenshotUglyHack();
-                System.out.println("save");
+                takeScreenshotUglyHack(false);
             }
         });
 
@@ -82,6 +82,9 @@ public class ExportFragment extends Fragment {
         }
     }
 
+    /**
+     * This takes the screenshot for the EditorFragment activity
+     */
     private Bitmap getScreenshot() {
         View v1 = ((EditorFragment)getActivity().getSupportFragmentManager().findFragmentByTag("editor")).getView();
         v1.setDrawingCacheEnabled(true);
@@ -92,31 +95,48 @@ public class ExportFragment extends Fragment {
         return bitmap;
     }
 
-    private void takeScreenshotUglyHack() {
+    /**
+     * This methods hide everything, waits for one second then take a screenshot
+     * This fixes a bug we hack where the menu would blink like it was correctly hidden bug the exported picture would
+     * still have the menu & such
+     */
+    private void takeScreenshotUglyHack(final boolean share) {
         ((MenuFragment)getActivity().getSupportFragmentManager().findFragmentByTag("menu")).hide();
         this.behavior.setState(BottomSheetBehavior.STATE_HIDDEN);
 
-        Thread t  = new Thread(){
+        final ExportFragment f = this;
+
+        new Thread(){
             public void run() {
                 try {
                     Thread.sleep(1000);
-                    Activity a = ExportFragment.this.getActivity();
-                    a.runOnUiThread(new Runnable() {
+                    f.getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            ExportFragment.this.takeScreenshot();
+                            File file = f.takeScreenshot();
+
+                            if (share && file != null) {
+                                Intent sharingIntent = new Intent(Intent.ACTION_SEND);
+
+                                sharingIntent.setType("image/jpeg");
+                                sharingIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                                Uri uri = FileProvider.getUriForFile(getActivity().getApplicationContext(), getActivity().getPackageName() + ".provider", file);
+                                sharingIntent.putExtra(Intent.EXTRA_STREAM, uri);
+                                startActivity(Intent.createChooser(sharingIntent, "Share image using"));
+                            }
                         }
                     });
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
-        };
-
-        t.start();
+        }.start();
     }
 
-    private void takeScreenshot() {
+    /**
+     * This methods checks for the write permissions, take the screenshot and outputs the picture
+     */
+    private File takeScreenshot() {
         verifyStoragePermissions(this.getActivity());
 
        boolean b1 = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED;
@@ -125,7 +145,7 @@ public class ExportFragment extends Fragment {
         if (b1 || b2) {
             Toast t = Toast.makeText(this.getActivity(), "Pas la permission!", Toast.LENGTH_LONG);
             t.show();
-            return;
+            return null;
         }
 
         Date now = new Date();
@@ -144,21 +164,35 @@ public class ExportFragment extends Fragment {
             bitmap.compress(Bitmap.CompressFormat.JPEG, quality, outputStream);
             outputStream.flush();
             outputStream.close();
+
+            Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+            mediaScanIntent.setData(Uri.fromFile(imageFile));
+            getContext().sendBroadcast(mediaScanIntent);
+
+            ((MenuFragment)getActivity().getSupportFragmentManager().findFragmentByTag("menu")).show();
+            return imageFile;
         } catch (Throwable e) {
             e.printStackTrace();
         }
 
-        MainActivity.mf.show();
+        ((MenuFragment)getActivity().getSupportFragmentManager().findFragmentByTag("menu")).show();
+        return null;
     }
 
 
+   /**
+     * This shows the bottom menu
+     */
     public void show() {
         if (this.behavior.getState() != BottomSheetBehavior.STATE_EXPANDED) {
             this.behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
         }
     }
 
-    public void hidden() {
+    /**
+     * This hide the bottom menu
+     */
+    public void hide() {
         if (this.behavior.getState() != BottomSheetBehavior.STATE_HIDDEN) {
             this.behavior.setState(BottomSheetBehavior.STATE_HIDDEN);
         }

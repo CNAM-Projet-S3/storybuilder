@@ -21,10 +21,17 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import org.opencv.android.OpenCVLoader;
+import org.opencv.android.Utils;
+import org.opencv.core.Mat;
+import org.opencv.core.Size;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Objects;
+
+import static org.opencv.imgproc.Imgproc.resize;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -33,6 +40,12 @@ public class MainActivity extends AppCompatActivity {
     final int PICTURE_TAKEN  = 1;
     final int PICTURE_CHOSEN = 2;
     private String currentPhotoPath;
+
+    static {
+        if (!OpenCVLoader.initDebug()) {
+            // Handle initialization error
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,8 +136,19 @@ public class MainActivity extends AppCompatActivity {
 
             this.removeImageFile();
 
+            //resize image
+            Mat imageMat    = new Mat();
+            Utils.bitmapToMat(image, imageMat);
+            int scalePercent   = 50; // percent of original size
+            int newWidthImage  = imageMat.width() * scalePercent / 100;
+            int newHeightImage = imageMat.height() * scalePercent / 100;
+            resize(imageMat, imageMat, new Size(newWidthImage, newHeightImage));
+            //new bitmap
+            Bitmap finalBitmap = Bitmap.createBitmap(imageMat.width(), imageMat.height(), Bitmap.Config.ARGB_8888);
+            Utils.matToBitmap(imageMat, finalBitmap);
+
             //display picture
-            this.addFragment(new EditorFragment(image), R.id.main_activity, "editor");
+            this.addFragment(new EditorFragment(finalBitmap), R.id.main_activity, "editor");
 
             //display menu
             this.addFragment(new MenuFragment(), R.id.editor_fragment, "menu");

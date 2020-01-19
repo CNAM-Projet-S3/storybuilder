@@ -19,13 +19,14 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.Objects;
 
+import info.overflow_bde.storybuilder.sticker.CreateStickerFragment;
 
 public class MenuFragment extends Fragment {
 
-	private ExportFragment      exportFragment;
-	private FragmentTransaction fragmentTransaction;
-	private StickersListFragment stickersListFragment;
-	//private CanvasFragment canvasFragment;
+	private ExportFragment        exportFragment;
+	private FragmentTransaction   fragmentTransaction;
+	private StickersListFragment  stickersListFragment;
+	private CreateStickerFragment createStickerFragment;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, final Bundle savedInstanceState) {
@@ -39,12 +40,14 @@ public class MenuFragment extends Fragment {
 		this.stickersMenuActionButton(view);
 		this.textsMenuActionButton(view);
 		this.drawMenuActionButton(view);
+		this.createStickerActionButton(view);
+
 		//hidden action menu
 		container.findViewById(R.id.editor_content).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				stickersListFragment.hidden();
-				exportFragment.hidden();
+				stickersListFragment.hide();
+				exportFragment.hide();
 			}
 		});
 		this.fragmentTransaction.commit();
@@ -124,6 +127,18 @@ public class MenuFragment extends Fragment {
                 }
             }
         });
+	}
+
+	private void createStickerActionButton(View view) {
+		this.createStickerFragment = new CreateStickerFragment();
+		this.fragmentTransaction.add(R.id.editor_fragment, this.createStickerFragment, "create-sticker");
+		FloatingActionButton buttonCreateSticker = view.findViewById(R.id.editor_create_sticker);
+		buttonCreateSticker.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				createStickerFragment.init();
+			}
+		});
 	}
 
 	public void show() {

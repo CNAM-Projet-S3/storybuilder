@@ -1,6 +1,8 @@
 package info.overflow_bde.storybuilder;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -13,10 +15,15 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 import androidx.fragment.app.Fragment;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import java.util.Objects;
+
+import petrov.kristiyan.colorpicker.ColorPicker;
 
 
 public class DrawFragment extends Fragment{
@@ -25,9 +32,13 @@ public class DrawFragment extends Fragment{
     private DrawingView dv;
     private Paint mPaint;
     private boolean enable;
+    private int color;
+    private FloatingActionButton buttonColor;
     public DrawFragment(){
         Log.i("Draw","Constructeur drawFragment");
+        this.color = Color.BLUE;
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, final Bundle savedInstanceState) {
@@ -38,7 +49,7 @@ public class DrawFragment extends Fragment{
         mPaint = new Paint();
         mPaint.setAntiAlias(true);
         mPaint.setDither(true);
-        mPaint.setColor(Color.BLUE);
+        mPaint.setColor(color);
         mPaint.setStyle(Paint.Style.STROKE);
         mPaint.setStrokeJoin(Paint.Join.ROUND);
         mPaint.setStrokeCap(Paint.Cap.ROUND);
@@ -48,16 +59,57 @@ public class DrawFragment extends Fragment{
         Log.i("height",String.valueOf(view.getHeight()));
         menuFragment = (MenuFragment) Objects.requireNonNull(this.getFragmentManager()).findFragmentByTag("menu");
         enable = false;
+        buttonColor = (FloatingActionButton)getActivity().findViewById(R.id.editor_color_text);
+        buttonColor.setVisibility(View.INVISIBLE);
+        buttonColor.setBackgroundTintList(ColorStateList.valueOf(this.color));
+        buttonColor.setOnClickListener(onButtonTextColorClickListener());
         return  view;
     }
 
     public void setEnable(boolean b){
         Log.i("b", String.valueOf(b));
+        if(b) {
+            buttonColor.setVisibility(View.VISIBLE);
+        }else{
+            buttonColor.setVisibility(View.INVISIBLE);
+        }
         enable = b;
     }
 
     public boolean isEnable(){
         return this.enable;
+    }
+
+
+	/*
+	on click, show the colorpicker
+	on chose, change the color of the text and the color of the button
+	on cancel, keep the previous color
+	 */
+
+    private View.OnClickListener onButtonTextColorClickListener() {
+        return new View.OnClickListener() {
+
+            @SuppressLint("ClickableViewAccessibility")
+            @Override
+            public void onClick(View view) {
+                ColorPicker colorPicker = new ColorPicker(DrawFragment.this.getActivity());
+                colorPicker.show();
+                colorPicker.setOnChooseColorListener(new ColorPicker.OnChooseColorListener() {
+                    @Override
+                    public void onChooseColor(int position,int color) {
+
+                        mPaint.setColor(color);
+                        buttonColor.setBackgroundTintList(ColorStateList.valueOf(color));
+                        DrawFragment.this.color=color;
+                    }
+                    @Override
+                    public void onCancel(){
+                        mPaint.setColor(DrawFragment.this.color);
+                    }
+                });
+            }
+        };
     }
 
     public class DrawingView extends View {
@@ -80,7 +132,7 @@ public class DrawFragment extends Fragment{
             circlePaint = new Paint();
             circlePath = new Path();
             circlePaint.setAntiAlias(true);
-            circlePaint.setColor(Color.BLUE);
+            circlePaint.setColor(color);
             circlePaint.setStyle(Paint.Style.STROKE);
             circlePaint.setStrokeJoin(Paint.Join.MITER);
             circlePaint.setStrokeWidth(12);
@@ -107,6 +159,7 @@ public class DrawFragment extends Fragment{
         private static final float TOUCH_TOLERANCE = 4;
 
         private void touch_start(float x, float y) {
+            circlePaint.setColor(color);
             mPath.reset();
             mPath.moveTo(x, y);
             mX = x;

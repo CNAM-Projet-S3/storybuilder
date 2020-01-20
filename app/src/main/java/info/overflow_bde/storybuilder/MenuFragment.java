@@ -25,6 +25,7 @@ public class MenuFragment extends Fragment {
 	private FragmentTransaction   fragmentTransaction;
 	private StickersListFragment  stickersListFragment;
 	private CreateStickerFragment createStickerFragment;
+	private DrawFragment          drawFragment;
 	private MaterialButton        buttonShareOrSave;
 	private MaterialButton        buttonExit;
 	private FloatingActionButton  buttonStickers;
@@ -48,7 +49,7 @@ public class MenuFragment extends Fragment {
 		this.textsMenuActionButton(view);
 		this.createStickerActionButton(view);
 		this.drawMenuActionButton(view);
-		this.restMenuActionButton(view);
+		this.resetMenuActionButton(view);
 
 		//hidden action menu
 		container.findViewById(R.id.editor_content).setOnClickListener(new View.OnClickListener() {
@@ -122,36 +123,45 @@ public class MenuFragment extends Fragment {
 
 	private void drawMenuActionButton(View view) {
 		buttonDraw = view.findViewById(R.id.editor_draw);
-		final DrawFragment df = new DrawFragment();
-		((MainActivity) Objects.requireNonNull(getActivity())).addFragment(df, R.id.editor_content, "draw");
+		this.drawFragment = new DrawFragment();
+		((MainActivity) Objects.requireNonNull(getActivity())).addFragment(drawFragment, R.id.editor_content, "draw");
 		buttonDraw.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if (df.isEnable()) {
+				if (drawFragment.isEnable()) {
 					buttonDraw.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#A7B6BC")));
-					df.setEnable(false);
+					drawFragment.setEnable(false);
 
 					//show all fragment in editor content
-					showEditorContentChildren(df);
+					showEditorContentChildren(drawFragment);
 					showMenuButtons(buttonDraw);
 
 				} else {
 					// hide all fragment in editor content
 					hideMenuButtons(buttonDraw);
-					hideEditorContentChildren(df);
+					hideEditorContentChildren(drawFragment);
 					buttonDraw.setBackgroundTintList(ColorStateList.valueOf(Color.RED));
-					df.setEnable(true);
+					drawFragment.setEnable(true);
 				}
 			}
 		});
 	}
 
-	private void restMenuActionButton(View view) {
+	private void resetMenuActionButton(View view) {
 		buttonReset = view.findViewById(R.id.editor_reset);
 		buttonReset.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				v = null;
+				FragmentManager     fragmentManager     = getFragmentManager();
+				FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+				for (Fragment fragment : fragmentManager.getFragments()) {
+					if (((ViewGroup) fragment.getView().getParent()).getId() == R.id.editor_content && !fragment.equals(createStickerFragment)) {
+						fragmentTransaction.remove(fragment);
+					}
+				}
+				fragmentTransaction.commit();
+				drawFragment = new DrawFragment();
+				((MainActivity) Objects.requireNonNull(getActivity())).addFragment(drawFragment, R.id.editor_content, "draw");
 			}
 		});
 	}

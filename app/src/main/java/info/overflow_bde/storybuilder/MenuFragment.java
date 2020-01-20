@@ -110,13 +110,11 @@ public class MenuFragment extends Fragment {
 
 
 	private void textsMenuActionButton(View view) {
-
 		buttonText = view.findViewById(R.id.editor_text);
 		buttonText.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				((MainActivity) Objects.requireNonNull(getActivity())).addFragment(new TextFragment(), R.id.editor_content, "text");
-
 			}
 		});
 	}
@@ -208,7 +206,7 @@ public class MenuFragment extends Fragment {
 	 *
 	 * @param showFragment
 	 */
-	private void hideEditorContentChildren(Fragment showFragment) {
+	public void hideEditorContentChildren(Fragment showFragment) {
 		FragmentManager     fragmentManager     = getFragmentManager();
 		FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 		if (showFragment.isHidden()) {
@@ -229,7 +227,7 @@ public class MenuFragment extends Fragment {
 	 *
 	 * @param showFragment
 	 */
-	private void showEditorContentChildren(Fragment showFragment) {
+	public void showEditorContentChildren(Fragment showFragment) {
 		FragmentManager     fragmentManager     = getFragmentManager();
 		FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 

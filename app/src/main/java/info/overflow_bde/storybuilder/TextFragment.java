@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -15,7 +14,6 @@ import android.widget.EditText;
 import android.widget.RelativeLayout;
 
 import androidx.fragment.app.Fragment;
-
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -31,7 +29,6 @@ public class TextFragment extends Fragment {
 	private int xDelta;
 
 	private MenuFragment menuFragment;
-	private ViewGroup    mainLayout;
 	private EditText     editText;
 	private FloatingActionButton buttonTextColor;
 
@@ -57,7 +54,7 @@ public class TextFragment extends Fragment {
 		buttonTextColor.setVisibility(View.VISIBLE);
 		buttonTextColor.setBackgroundTintList(ColorStateList.valueOf(this.color));
 
-		mainLayout = (RelativeLayout) container.findViewById(R.id.editor_content);
+		RelativeLayout mainLayout = container.findViewById(R.id.editor_content);
 
 
 		mainLayout.setOnClickListener(onClickListener());
@@ -125,13 +122,16 @@ public class TextFragment extends Fragment {
 	 */
 
 	public void onFocusChange(View v, boolean hasFocus) {
-		if(hasFocus)
+		if (hasFocus) {
 			buttonTextColor.setVisibility(View.VISIBLE);
+			menuFragment.hideEditorContentChildren(this);
+			menuFragment.hideMenuButtons(buttonTextColor);
+		}
 		else {
 			buttonTextColor.setVisibility(View.INVISIBLE);
+			menuFragment.showEditorContentChildren(this);
+			menuFragment.showMenuButtons(buttonTextColor);
 		}
-
-
 	}
 
 	/*

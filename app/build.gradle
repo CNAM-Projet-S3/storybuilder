@@ -1,5 +1,9 @@
 apply plugin: 'com.android.application'
 
+def secretsPropertiesFile = rootProject.file("secrets.properties")
+def secretsProperties = new Properties()
+secretsProperties.load(new FileInputStream(secretsPropertiesFile))
+
 android {
     compileSdkVersion 29
     buildToolsVersion "29.0.2"
@@ -10,7 +14,10 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        buildConfigField("String", "HOSTNAME", secretsProperties['HOSTNAME'])
+        buildConfigField("String", "CLIENT_ID", secretsProperties['CLIENT_ID'])
     }
+
     buildTypes {
         release {
             minifyEnabled false

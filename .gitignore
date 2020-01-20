@@ -14,3 +14,4 @@
 .cxx
 .idea/
 /openCVLibrary2411/build
+secrets.properties

@@ -19,7 +19,18 @@ import java.util.Map;
 
 import javax.net.ssl.HttpsURLConnection;
 
+import info.overflow_bde.storybuilder.BuildConfig;
+
 public class HTTPUtils {
+
+    public static final String CLIENT_ID = BuildConfig.CLIENT_ID;
+    private static final String HOSTNAME = BuildConfig.HOSTNAME;
+
+    public static String getHostname() {
+        // Ne pas supprimer, ça vient de Gradle
+        if (HOSTNAME.endsWith("/")) return HOSTNAME;
+        return HOSTNAME + "/";
+    }
 
     /**
      * Fetch bitmap from url
@@ -48,14 +59,14 @@ public class HTTPUtils {
             public void run() {
                 try {
                     URL url = new URL(sUrl);
-                    HttpsURLConnection con = (HttpsURLConnection)url.openConnection();
+                    HttpURLConnection con = (HttpURLConnection)url.openConnection();
                     con.setRequestMethod("POST");
                     con.setRequestProperty("Content-Type", "application/json; utf-8");
                     con.setRequestProperty("Accept", "application/json");
                     con.setDoOutput(true);
 
                     if (!params.containsKey("ClientID"))
-                        params.put("ClientID", "FjeS_tzie13-s");
+                        params.put("ClientID", CLIENT_ID);
 
                     String input = new JSONObject(params).toString();
 
@@ -82,7 +93,12 @@ public class HTTPUtils {
                         Log.i("STORYBUILDER", "Error in the request: " + con.getResponseCode() + " (" + con.getContent().toString() + ")");
                     }
                 } catch(Exception e) {
-                    Log.d("STORYBUILDER", e.getMessage());
+                    if (e.getMessage() != null) {
+                        Log.d("STORYBUILDER", e.getMessage());
+                    } else {
+                        Log.d("STORYBUILDER", "Something weird happened");
+                        e.printStackTrace();
+                    }
                 }
             }
         });

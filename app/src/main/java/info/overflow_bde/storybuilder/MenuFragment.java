@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +14,6 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
 
 import java.util.Objects;
 
@@ -114,7 +112,6 @@ public class MenuFragment extends Fragment {
 		final FloatingActionButton buttonDraw = view.findViewById(R.id.editor_draw);
         final DrawFragment df = new DrawFragment();
         ((MainActivity) Objects.requireNonNull(getActivity())).addFragment(df, R.id.editor_content, "draw");
-       // this.fragmentTransaction.add(R.id.editor_fragment, this.stickersListFragment, "stickers");
         buttonDraw.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -122,7 +119,13 @@ public class MenuFragment extends Fragment {
                     int color =  Color.parseColor("#A7B6BC");
                     buttonDraw.setBackgroundTintList(ColorStateList.valueOf(color));
                     df.setEnable(false);
+
+					//show all fragment in editor content
+					showEditorContentChildren(df);
+
                 }else {
+					// hide all fragment in editor content
+					hideEditorContentChildren(df);
                     buttonDraw.setBackgroundTintList(ColorStateList.valueOf(Color.RED));
                     df.setEnable(true);
                 }
@@ -147,6 +150,7 @@ public class MenuFragment extends Fragment {
 		buttonCreateSticker.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				hideEditorContentChildren(createStickerFragment);
 				createStickerFragment.init();
 			}
 		});
@@ -166,4 +170,34 @@ public class MenuFragment extends Fragment {
 				.hide(this)
 				.commit();
 	}
+
+	private void hideEditorContentChildren(Fragment showFragment) {
+		FragmentManager     fragmentManager     = getFragmentManager();
+		FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+		if (showFragment.isHidden()) {
+			fragmentTransaction.show(showFragment);
+		}
+
+		for (Fragment fragment : fragmentManager.getFragments()) {
+			if (((ViewGroup) showFragment.getView().getParent()).getId() == ((ViewGroup) fragment.getView().getParent()).getId() && !fragment.equals(showFragment)) {
+				fragmentTransaction.hide(fragment);
+			}
+		}
+
+		fragmentTransaction.commit();
+	}
+
+	private void showEditorContentChildren(Fragment showFragment) {
+		FragmentManager     fragmentManager     = getFragmentManager();
+		FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+		for (Fragment fragment : fragmentManager.getFragments()) {
+			if (((ViewGroup) showFragment.getView().getParent()).getId() == ((ViewGroup) fragment.getView().getParent()).getId() &&fragment.isHidden()) {
+				fragmentTransaction.show(fragment);
+			}
+		}
+
+		fragmentTransaction.commit();
+	}
+
 }

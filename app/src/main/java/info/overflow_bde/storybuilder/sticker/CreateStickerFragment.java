@@ -20,6 +20,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import org.opencv.android.OpenCVLoader;
 import org.opencv.android.Utils;
@@ -200,6 +202,17 @@ public class CreateStickerFragment extends Fragment implements OnTouchListener {
 				//warn user
 				Toast t = Toast.makeText(this.getActivity(), "Succès", Toast.LENGTH_SHORT);
 				t.show();
+
+				// show all other fragment in editor content
+				FragmentManager     fragmentManager     = getFragmentManager();
+				FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+				for (Fragment fragment : fragmentManager.getFragments()) {
+					if (((ViewGroup) this.getView().getParent()).getId() == ((ViewGroup) fragment.getView().getParent()).getId() && fragment.isHidden()) {
+						fragmentTransaction.show(fragment);
+					}
+				}
+				fragmentTransaction.commit();
 			}
 		}
 		return true;
@@ -235,5 +248,14 @@ public class CreateStickerFragment extends Fragment implements OnTouchListener {
 		ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 		bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
 		return Base64.encodeToString(byteArrayOutputStream.toByteArray(), Base64.DEFAULT);
+	}
+
+	/**
+	 * check if the create sticker action is enabled
+	 *
+	 * @return boolean
+	 */
+	public boolean isEnabled() {
+		return this.isEnabled;
 	}
 }

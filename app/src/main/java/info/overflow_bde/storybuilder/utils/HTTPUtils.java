@@ -26,10 +26,15 @@ public class HTTPUtils {
     public static final String CLIENT_ID = BuildConfig.CLIENT_ID;
     private static final String HOSTNAME = BuildConfig.HOSTNAME;
 
-    public static String getHostname() {
+    public static String getHostname(String route) {
+        String url = HOSTNAME;
+
         // Ne pas supprimer, ça vient de Gradle
-        if (HOSTNAME.endsWith("/")) return HOSTNAME;
-        return HOSTNAME + "/";
+        if (!url.endsWith("/")) url = url + "/";
+
+        url += route;
+
+        return url;
     }
 
     /**

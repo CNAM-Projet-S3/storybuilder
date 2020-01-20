@@ -2,8 +2,10 @@ package info.overflow_bde.storybuilder.sticker;
 
 import android.annotation.SuppressLint;
 import android.content.ContentValues;
+import android.content.res.ColorStateList;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
@@ -84,9 +86,6 @@ public class CreateStickerFragment extends Fragment implements OnTouchListener {
 
 	public void init() {
 		Log.i("create_sticker", "initialisation");
-		// hide menu
-		this.menuFragment.hide();
-
 		//@TODO hide editor content
 
 		// enabled on touch listner
@@ -103,6 +102,9 @@ public class CreateStickerFragment extends Fragment implements OnTouchListener {
 	@Override
 	public boolean onTouch(View v, MotionEvent event) {
 		if (this.isEnabled) {
+
+			// hide menu
+			this.menuFragment.hide();
 			if (event.getAction() != MotionEvent.ACTION_UP) {
 
 				// logs
@@ -194,8 +196,6 @@ public class CreateStickerFragment extends Fragment implements OnTouchListener {
 				this.isEnabled = false;
 				this.menuFragment.show();
 
-				//@TODO hide editor content
-
 				//save selection grap to database
 				this.saveInDatabase(finalBitmap);
 
@@ -213,6 +213,12 @@ public class CreateStickerFragment extends Fragment implements OnTouchListener {
 					}
 				}
 				fragmentTransaction.commit();
+
+				// show other menu buttons
+				this.menuFragment.showMenuButtons(this.menuFragment.getButtonCreateSticker());
+
+				// reset color action button
+				this.menuFragment.getButtonCreateSticker().setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#A7B6BC")));
 			}
 		}
 		return true;
@@ -258,4 +264,14 @@ public class CreateStickerFragment extends Fragment implements OnTouchListener {
 	public boolean isEnabled() {
 		return this.isEnabled;
 	}
+
+	/**
+	 * set enabled
+	 *
+	 * @param enabled
+	 */
+	public void setEnabled(Boolean enabled) {
+		this.isEnabled = enabled;
+	}
+
 }

@@ -7,12 +7,12 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.Objects;
@@ -25,6 +25,15 @@ public class MenuFragment extends Fragment {
 	private FragmentTransaction   fragmentTransaction;
 	private StickersListFragment  stickersListFragment;
 	private CreateStickerFragment createStickerFragment;
+	private MaterialButton        buttonShareOrSave;
+	private MaterialButton        buttonExit;
+	private FloatingActionButton  buttonStickers;
+	private FloatingActionButton  buttonDraw;
+	private FloatingActionButton  buttonText;
+	private FloatingActionButton  buttonReset;
+	private FloatingActionButton  buttonCreateSticker;
+	private FloatingActionButton  buttonFilter;
+
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, final Bundle savedInstanceState) {
@@ -38,7 +47,7 @@ public class MenuFragment extends Fragment {
 		this.stickersMenuActionButton(view);
 		this.textsMenuActionButton(view);
 		this.createStickerActionButton(view);
-        this.drawMenuActionButton(view);
+		this.drawMenuActionButton(view);
 		this.restMenuActionButton(view);
 
 		//hidden action menu
@@ -49,7 +58,10 @@ public class MenuFragment extends Fragment {
 				exportFragment.hide();
 			}
 		});
+
 		this.fragmentTransaction.commit();
+
+		this.buttonFilter = view.findViewById(R.id.editor_filters);
 
 		return view;
 	}
@@ -57,7 +69,7 @@ public class MenuFragment extends Fragment {
 	private void shareOrSaveActionMenuButton(View view) {
 		this.exportFragment = new ExportFragment();
 		this.fragmentTransaction.add(R.id.editor_fragment, exportFragment, "shareOrSave");
-		Button buttonShareOrSave = (Button) view.findViewById(R.id.save_or_share);
+		buttonShareOrSave = view.findViewById(R.id.save_or_share);
 		buttonShareOrSave.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -67,7 +79,7 @@ public class MenuFragment extends Fragment {
 	}
 
 	private void exitMenuActionButton(View view) {
-		Button buttonExit = (Button) view.findViewById(R.id.action_menu_exit);
+		buttonExit = view.findViewById(R.id.action_menu_exit);
 		buttonExit.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -84,7 +96,7 @@ public class MenuFragment extends Fragment {
 	private void stickersMenuActionButton(View view) {
 		this.stickersListFragment = new StickersListFragment();
 		this.fragmentTransaction.add(R.id.editor_fragment, this.stickersListFragment, "stickers");
-		FloatingActionButton buttonStickers = (FloatingActionButton) view.findViewById(R.id.editor_sticker);
+		buttonStickers = (FloatingActionButton) view.findViewById(R.id.editor_sticker);
 
 
 		buttonStickers.setOnClickListener(new View.OnClickListener() {
@@ -98,7 +110,7 @@ public class MenuFragment extends Fragment {
 
 	private void textsMenuActionButton(View view) {
 
-		FloatingActionButton buttonText = view.findViewById(R.id.editor_text);
+		buttonText = view.findViewById(R.id.editor_text);
 		buttonText.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -109,49 +121,59 @@ public class MenuFragment extends Fragment {
 	}
 
 	private void drawMenuActionButton(View view) {
-		final FloatingActionButton buttonDraw = view.findViewById(R.id.editor_draw);
-        final DrawFragment df = new DrawFragment();
-        ((MainActivity) Objects.requireNonNull(getActivity())).addFragment(df, R.id.editor_content, "draw");
-        buttonDraw.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(df.isEnable()){
-                    int color =  Color.parseColor("#A7B6BC");
-                    buttonDraw.setBackgroundTintList(ColorStateList.valueOf(color));
-                    df.setEnable(false);
+		buttonDraw = view.findViewById(R.id.editor_draw);
+		final DrawFragment df = new DrawFragment();
+		((MainActivity) Objects.requireNonNull(getActivity())).addFragment(df, R.id.editor_content, "draw");
+		buttonDraw.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				if (df.isEnable()) {
+					buttonDraw.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#A7B6BC")));
+					df.setEnable(false);
 
 					//show all fragment in editor content
 					showEditorContentChildren(df);
+					showMenuButtons(buttonDraw);
 
-                }else {
+				} else {
 					// hide all fragment in editor content
+					hideMenuButtons(buttonDraw);
 					hideEditorContentChildren(df);
-                    buttonDraw.setBackgroundTintList(ColorStateList.valueOf(Color.RED));
-                    df.setEnable(true);
-                }
-            }
-        });
+					buttonDraw.setBackgroundTintList(ColorStateList.valueOf(Color.RED));
+					df.setEnable(true);
+				}
+			}
+		});
 	}
 
-    private void restMenuActionButton(View view) {
-        FloatingActionButton buttonText = view.findViewById(R.id.editor_reset);
-        buttonText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                v = null;
-            }
-        });
-    }
+	private void restMenuActionButton(View view) {
+		buttonReset = view.findViewById(R.id.editor_reset);
+		buttonReset.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				v = null;
+			}
+		});
+	}
 
 	private void createStickerActionButton(View view) {
 		this.createStickerFragment = new CreateStickerFragment();
 		this.fragmentTransaction.add(R.id.editor_content, this.createStickerFragment, "create-sticker");
-		FloatingActionButton buttonCreateSticker = view.findViewById(R.id.editor_create_sticker);
+		buttonCreateSticker = view.findViewById(R.id.editor_create_sticker);
 		buttonCreateSticker.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				hideEditorContentChildren(createStickerFragment);
-				createStickerFragment.init();
+				if (createStickerFragment.isEnabled()) {
+					buttonCreateSticker.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#A7B6BC")));
+					showEditorContentChildren(createStickerFragment);
+					showMenuButtons(buttonCreateSticker);
+					createStickerFragment.setEnabled(false);
+				} else {
+					buttonCreateSticker.setBackgroundTintList(ColorStateList.valueOf(Color.RED));
+					hideEditorContentChildren(createStickerFragment);
+					hideMenuButtons(buttonCreateSticker);
+					createStickerFragment.init();
+				}
 			}
 		});
 	}
@@ -171,6 +193,11 @@ public class MenuFragment extends Fragment {
 				.commit();
 	}
 
+	/**
+	 * hide all fragment of parent id fragment pass in parameter except fragment pass in parameter
+	 *
+	 * @param showFragment
+	 */
 	private void hideEditorContentChildren(Fragment showFragment) {
 		FragmentManager     fragmentManager     = getFragmentManager();
 		FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -187,12 +214,17 @@ public class MenuFragment extends Fragment {
 		fragmentTransaction.commit();
 	}
 
+	/**
+	 * show all fragment of parent id fragment pass in parameter
+	 *
+	 * @param showFragment
+	 */
 	private void showEditorContentChildren(Fragment showFragment) {
 		FragmentManager     fragmentManager     = getFragmentManager();
 		FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
 		for (Fragment fragment : fragmentManager.getFragments()) {
-			if (((ViewGroup) showFragment.getView().getParent()).getId() == ((ViewGroup) fragment.getView().getParent()).getId() &&fragment.isHidden()) {
+			if (((ViewGroup) showFragment.getView().getParent()).getId() == ((ViewGroup) fragment.getView().getParent()).getId() && fragment.isHidden()) {
 				fragmentTransaction.show(fragment);
 			}
 		}
@@ -200,4 +232,51 @@ public class MenuFragment extends Fragment {
 		fragmentTransaction.commit();
 	}
 
+	/**
+	 * hide all menu button except the button pass in parameter
+	 *
+	 * @param showButton
+	 */
+	public void hideMenuButtons(FloatingActionButton showButton) {
+		if (!showButton.equals(this.buttonCreateSticker))
+			this.buttonCreateSticker.hide();
+		if (!showButton.equals(this.buttonDraw))
+			this.buttonDraw.hide();
+		if (!showButton.equals(this.buttonReset))
+			this.buttonReset.hide();
+		if (!showButton.equals(this.buttonStickers))
+			this.buttonStickers.hide();
+		if (!showButton.equals(this.buttonText))
+			this.buttonText.hide();
+		if (!showButton.equals(this.buttonFilter))
+			this.buttonFilter.hide();
+	}
+
+	/**
+	 * show all menu button except the button pass in parameter who are already display
+	 *
+	 * @param showButton
+	 */
+	public void showMenuButtons(FloatingActionButton showButton) {
+		if (!showButton.equals(this.buttonCreateSticker))
+			this.buttonCreateSticker.show();
+		if (!showButton.equals(this.buttonDraw))
+			this.buttonDraw.show();
+		if (!showButton.equals(this.buttonReset))
+			this.buttonReset.show();
+		if (!showButton.equals(this.buttonStickers))
+			this.buttonStickers.show();
+		if (!showButton.equals(this.buttonText))
+			this.buttonText.show();
+		if (!showButton.equals(this.buttonFilter))
+			this.buttonFilter.show();
+	}
+
+	/**
+	 * Return sticker button create action
+	 * @return FloatingActionButton
+	 */
+	public FloatingActionButton getButtonCreateSticker() {
+		return this.buttonCreateSticker;
+	}
 }

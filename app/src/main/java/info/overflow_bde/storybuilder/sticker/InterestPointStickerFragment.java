@@ -87,7 +87,7 @@ public class InterestPointStickerFragment extends Fragment {
         map.put("Longitude", location.getLongitude() + "");
         map.put("Latitude", location.getLatitude() + "");
 
-        HTTPUtils.executeHttpRequest("https://story.overflow-bde.info/here", map, new SimpleCallback() {
+        HTTPUtils.executeHttpRequest(HTTPUtils.getHostname("here"), map, new SimpleCallback() {
             @Override
             public void callback(String response) throws JSONException {
                 ArrayList<InterestPointEntity> entities = new ArrayList<>();

@@ -121,8 +121,7 @@ public class MusicStickerFragment extends Fragment {
         map.put("Artist", me.artist);
         map.put("Title", me.title);
 
-        HTTPUtils.executeHttpRequest("spotify", map, new SimpleCallback() {
-        //HTTPUtils.executeHttpRequest("https://story.overflow-bde.info/spotify", map, new SimpleCallback() {
+        HTTPUtils.executeHttpRequest(HTTPUtils.getHostname("spotify"), map, new SimpleCallback() {
             @Override
             public void callback(String resp) throws JSONException {
                 ArrayList<MusicEntity> mes = new ArrayList<>();

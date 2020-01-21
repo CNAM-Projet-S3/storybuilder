@@ -25,12 +25,14 @@ public class TextFragment extends Fragment {
 	private int    size;
 	private int color;
 
-	private int yDelta;
-	private int xDelta;
+	private int     yDelta;
+	private int     xDelta;
+	private boolean isFocused = false;
 
 	private MenuFragment menuFragment;
 	private EditText     editText;
 	private FloatingActionButton buttonTextColor;
+	private RelativeLayout mainLayout;
 
 	public TextFragment() {
 		this.size = 20;
@@ -51,10 +53,10 @@ public class TextFragment extends Fragment {
 		menuFragment = (MenuFragment) Objects.requireNonNull(this.getFragmentManager()).findFragmentByTag("menu");
 
 		buttonTextColor = (FloatingActionButton)getActivity().findViewById(R.id.editor_color_text);
-		buttonTextColor.setVisibility(View.VISIBLE);
+		buttonTextColor.setVisibility(View.INVISIBLE);
 		buttonTextColor.setBackgroundTintList(ColorStateList.valueOf(this.color));
 
-		RelativeLayout mainLayout = container.findViewById(R.id.editor_content);
+		mainLayout = container.findViewById(R.id.editor_content);
 
 
 		mainLayout.setOnClickListener(onClickListener());
@@ -123,11 +125,13 @@ public class TextFragment extends Fragment {
 
 	public void onFocusChange(View v, boolean hasFocus) {
 		if (hasFocus) {
+			this.isFocused = true;
 			buttonTextColor.setVisibility(View.VISIBLE);
 			menuFragment.hideEditorContentChildren(this);
 			menuFragment.hideMenuButtons(buttonTextColor);
 		}
 		else {
+			this.isFocused = false;
 			buttonTextColor.setVisibility(View.INVISIBLE);
 			menuFragment.showEditorContentChildren(this);
 			menuFragment.showMenuButtons(buttonTextColor);
@@ -168,7 +172,7 @@ public class TextFragment extends Fragment {
 	/*
 	on click outside of the edittext, clear the focus and hide the keyboard
 	 */
-	private View.OnClickListener onClickListener() {
+	public View.OnClickListener onClickListener() {
 		return new View.OnClickListener() {
 
 			@SuppressLint("ClickableViewAccessibility")
@@ -179,6 +183,14 @@ public class TextFragment extends Fragment {
 				imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
 			}
 		};
+	}
+
+	public boolean getIsFocused() {
+		return this.isFocused;
+	}
+
+	public void defocused(){
+		this.mainLayout.performClick();
 	}
 
 

@@ -274,4 +274,9 @@ public class CreateStickerFragment extends Fragment implements OnTouchListener {
 		this.isEnabled = enabled;
 	}
 
+	public void disabled() {
+		this.isEnabled = false;
+		this.menuFragment.showMenuButtons(this.menuFragment.getButtonCreateSticker());
+		this.menuFragment.getButtonCreateSticker().setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#A7B6BC")));
+	}
 }

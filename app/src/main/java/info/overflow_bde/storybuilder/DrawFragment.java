@@ -27,11 +27,12 @@ import petrov.kristiyan.colorpicker.ColorPicker;
 
 public class DrawFragment extends Fragment{
 
-    private MenuFragment menuFragment;
-    private DrawingView dv;
-    private Paint paint;
-    private boolean enable;
-    private int color;
+    private MenuFragment         menuFragment;
+    private DrawingView          dv;
+    private Paint                paint;
+    private boolean              enable;
+    private boolean              hasContent = false;
+    private int                  color;
     private FloatingActionButton buttonColor;
     public DrawFragment(){
         Log.i("Draw","Constructeur drawFragment");
@@ -109,6 +110,13 @@ public class DrawFragment extends Fragment{
                 });
             }
         };
+    }
+
+    public void disabled() {
+        this.enable = false;
+        this.menuFragment.showMenuButtons(this.menuFragment.getButtonDraw());
+        this.menuFragment.getButtonDraw().setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#A7B6BC")));
+        this.buttonColor.setVisibility(View.INVISIBLE);
     }
 
     public class DrawingView extends View {
@@ -193,6 +201,7 @@ public class DrawFragment extends Fragment{
         public boolean onTouchEvent(MotionEvent event) {
             Log.i("enable",String.valueOf(enable));
             if (enable) {
+                hasContent = true;
                 float x = event.getX();
                 float y = event.getY();
 
@@ -213,6 +222,10 @@ public class DrawFragment extends Fragment{
             }
             return true;
         }
+    }
+
+    public boolean isHasContent() {
+        return this.hasContent;
     }
 
 }

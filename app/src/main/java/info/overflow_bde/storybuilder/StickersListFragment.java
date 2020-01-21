@@ -63,4 +63,8 @@ public class StickersListFragment extends Fragment {
             this.behavior.setState(BottomSheetBehavior.STATE_HIDDEN);
         }
     }
+
+    public boolean isOpen() {
+        return this.behavior.getState() == BottomSheetBehavior.STATE_EXPANDED;
+    }
 }

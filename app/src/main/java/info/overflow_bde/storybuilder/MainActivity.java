@@ -12,6 +12,7 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.IdRes;
 import androidx.annotation.Nullable;
@@ -29,14 +30,16 @@ import org.opencv.core.Size;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
+
+import info.overflow_bde.storybuilder.sticker.CreateStickerFragment;
 
 import static org.opencv.imgproc.Imgproc.resize;
 
 public class MainActivity extends AppCompatActivity {
 
-    public static EditorFragment ef;
-    public static MenuFragment mf;
     final int PICTURE_TAKEN  = 1;
     final int PICTURE_CHOSEN = 2;
     private String currentPhotoPath;
@@ -227,6 +230,94 @@ public class MainActivity extends AppCompatActivity {
 
         } catch (Exception ex) {
             Log.i("image", String.format("Error writing bitmapOri to %s: %s", destination.getAbsoluteFile(), ex.getMessage()));
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        boolean             alreadyBack         = false;
+        FragmentManager     fragmentManager     = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+        // closed sticker fragment list if is open
+        StickersListFragment fragmentStickers = (StickersListFragment) fragmentManager.findFragmentByTag("stickers");
+        if (fragmentStickers != null && fragmentStickers.isOpen()) {
+            fragmentStickers.hide();
+            alreadyBack = true;
+        }
+
+        // closed export fragment if is enabled
+        ExportFragment exportFragment = (ExportFragment) fragmentManager.findFragmentByTag("shareOrSave");
+        if (exportFragment != null && exportFragment.isOpen()) {
+            exportFragment.hide();
+            alreadyBack = true;
+        }
+
+        // closed draw fragment if is enabled
+        DrawFragment drawFragment = (DrawFragment) fragmentManager.findFragmentByTag("draw");
+        if (drawFragment != null && drawFragment.isEnable()) {
+            drawFragment.disabled();
+            alreadyBack = true;
+        }
+
+        // closed create sticker fragment if is enabled
+        CreateStickerFragment createStickerFragment = (CreateStickerFragment) fragmentManager.findFragmentByTag("create-sticker");
+        if (createStickerFragment != null && createStickerFragment.isEnabled()) {
+            createStickerFragment.disabled();
+            alreadyBack = true;
+        }
+
+        // removed fragment in editor content
+        if (!alreadyBack) {
+            int            count     = 0;
+            boolean        removed   = false;
+            List<Fragment> fragments = fragmentManager.getFragments();
+            Collections.reverse(fragments);
+            for (Fragment fragment : fragments) {
+                boolean unremoved = false;
+                if (
+                        ((ViewGroup) fragment.getView().getParent()).getId() == R.id.editor_content
+                                && !(fragment instanceof CreateStickerFragment)
+                                && !(fragment instanceof ExportFragment)
+                                && !(fragment instanceof StickersListFragment)
+
+                ) {
+                    count++;
+
+                    if (fragment instanceof DrawFragment && !((DrawFragment) fragment).isHasContent()) {
+                        unremoved = true;
+                        count--;
+                    }
+
+                    if (fragment instanceof TextFragment && ((TextFragment) fragment).getIsFocused()) {
+                        ((TextFragment) fragment).defocused();
+                        removed = true;
+                    }
+                    if (!removed && !unremoved) {
+                        Log.i("on_back_pressed", "removed " + fragment.getClass());
+                        fragmentTransaction.remove(fragment);
+                        removed = true;
+                    }
+
+                    if (fragment instanceof DrawFragment && removed && !unremoved) {
+                        drawFragment = new DrawFragment();
+                        this.addFragment(drawFragment, R.id.editor_content, "draw");
+                        MenuFragment menuFragment = (MenuFragment) fragmentManager.findFragmentByTag("menu");
+                        menuFragment.setDrawFragment(drawFragment);
+                    }
+
+                }
+            }
+            fragmentTransaction.commit();
+            Log.i("on_back_pressed", "they are again  " + count + " fragment in editor content");
+            if (count == 0) {
+                Intent intent = this.getIntent();
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                this.overridePendingTransition(0, 0);
+                this.finish();
+                this.overridePendingTransition(0, 0);
+                startActivity(intent);
+            }
         }
     }
 }

@@ -287,4 +287,16 @@ public class MenuFragment extends Fragment {
 	public FloatingActionButton getButtonCreateSticker() {
 		return this.buttonCreateSticker;
 	}
+
+	/**
+	 * Return sticker button draw action
+	 * @return FloatingActionButton
+	 */
+	public FloatingActionButton getButtonDraw() {
+		return this.buttonDraw;
+	}
+
+	public void setDrawFragment(DrawFragment drawFragment) {
+		this.drawFragment = drawFragment;
+	}
 }

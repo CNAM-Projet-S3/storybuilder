@@ -22,117 +22,117 @@ import java.util.Objects;
 import petrov.kristiyan.colorpicker.ColorPicker;
 
 public class TextFragment extends Fragment {
-	private int    size;
-	private int color;
+    private int    size;
+    private int color;
 
-	private int yDelta;
-	private int xDelta;
+    private int yDelta;
+    private int xDelta;
 
-	private MenuFragment menuFragment;
-	private EditText     editText;
-	private FloatingActionButton buttonTextColor;
+    private MenuFragment menuFragment;
+    private EditText     editText;
+    private FloatingActionButton buttonTextColor;
 
-	public TextFragment() {
-		this.size = 20;
-		this.color = Color.BLACK;
-	}
-
-
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		View view = inflater.inflate(R.layout.text_fragment, container, false);
-		editText = view.findViewById(R.id.layer_text);
-		editText.setHint("VOTRE TEXTE");
-		editText.setTextSize(this.size);
-		editText.setGravity(Gravity.CENTER);
-		editText.setForegroundGravity(Gravity.CENTER);
-
-		menuFragment = (MenuFragment) Objects.requireNonNull(this.getFragmentManager()).findFragmentByTag("menu");
-
-		buttonTextColor = (FloatingActionButton)getActivity().findViewById(R.id.editor_color_text);
-		buttonTextColor.setVisibility(View.VISIBLE);
-		buttonTextColor.setBackgroundTintList(ColorStateList.valueOf(this.color));
-
-		RelativeLayout mainLayout = container.findViewById(R.id.editor_content);
+    public TextFragment() {
+        this.size = 20;
+        this.color = Color.BLACK;
+    }
 
 
-		mainLayout.setOnClickListener(onClickListener());
-		buttonTextColor.setOnClickListener(onButtonTextColorClickListener());
-		editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-			@Override
-			public void onFocusChange(View v, boolean hasFocus) {
-				TextFragment.this.onFocusChange(v, hasFocus);
-			}
-		});
-		view.setOnTouchListener(onTouchListener());
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        View view = inflater.inflate(R.layout.text_fragment, container, false);
+        editText = view.findViewById(R.id.layer_text);
+        editText.setHint("VOTRE TEXTE");
+        editText.setTextSize(this.size);
+        editText.setGravity(Gravity.CENTER);
+        editText.setForegroundGravity(Gravity.CENTER);
 
-		return view;
-	}
+        menuFragment = (MenuFragment) Objects.requireNonNull(this.getFragmentManager()).findFragmentByTag("menu");
 
-	/*
-	move the edittext on action
-	 */
-	private View.OnTouchListener onTouchListener() {
+        buttonTextColor = (FloatingActionButton)getActivity().findViewById(R.id.editor_color_text);
+        buttonTextColor.setVisibility(View.VISIBLE);
+        buttonTextColor.setBackgroundTintList(ColorStateList.valueOf(this.color));
 
-		return new View.OnTouchListener() {
-
-			@SuppressLint("ClickableViewAccessibility")
-			@Override
-			public boolean onTouch(View view, MotionEvent event) {
-
-				final int x = (int) event.getRawX();
-				final int y = (int) event.getRawY();
-
-				switch (event.getAction() & MotionEvent.ACTION_MASK) {
-
-					case MotionEvent.ACTION_DOWN:
-
-						menuFragment.hide();
-						RelativeLayout.LayoutParams lParams = (RelativeLayout.LayoutParams)
-								view.getLayoutParams();
-
-						xDelta = x - lParams.leftMargin;
-						yDelta = y - lParams.topMargin;
-						break;
-					case MotionEvent.ACTION_UP:
-						menuFragment.show();
-						break;
-					case MotionEvent.ACTION_MOVE:
-						menuFragment.hide();
-						RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) view
-								.getLayoutParams();
-						layoutParams.leftMargin = x - xDelta;
-						layoutParams.topMargin = y - yDelta;
-						layoutParams.rightMargin = 0;
-						layoutParams.bottomMargin = 0;
-						view.setLayoutParams(layoutParams);
-						break;
+        RelativeLayout mainLayout = container.findViewById(R.id.editor_content);
 
 
-				}
-				return true;
-			}
-		};
-	}
+        mainLayout.setOnClickListener(onClickListener());
+        buttonTextColor.setOnClickListener(onButtonTextColorClickListener());
+        editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                TextFragment.this.onFocusChange(v, hasFocus);
+            }
+        });
+        view.setOnTouchListener(onTouchListener());
+
+        return view;
+    }
+
+    /*
+    move the edittext on action
+     */
+    private View.OnTouchListener onTouchListener() {
+
+        return new View.OnTouchListener() {
+
+            @SuppressLint("ClickableViewAccessibility")
+            @Override
+            public boolean onTouch(View view, MotionEvent event) {
+
+                final int x = (int) event.getRawX();
+                final int y = (int) event.getRawY();
+
+                switch (event.getAction() & MotionEvent.ACTION_MASK) {
+
+                    case MotionEvent.ACTION_DOWN:
+
+                        menuFragment.hide();
+                        RelativeLayout.LayoutParams lParams = (RelativeLayout.LayoutParams)
+                                view.getLayoutParams();
+
+                        xDelta = x - lParams.leftMargin;
+                        yDelta = y - lParams.topMargin;
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        menuFragment.show();
+                        break;
+                    case MotionEvent.ACTION_MOVE:
+                        menuFragment.hide();
+                        RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) view
+                                .getLayoutParams();
+                        layoutParams.leftMargin = x - xDelta;
+                        layoutParams.topMargin = y - yDelta;
+                        layoutParams.rightMargin = 0;
+                        layoutParams.bottomMargin = 0;
+                        view.setLayoutParams(layoutParams);
+                        break;
+
+
+                }
+                return true;
+            }
+        };
+    }
 
 	/*
 		show/hide the button color button
 		if the edittext is empty, remove the listener then remove the edittext
 	 */
 
-	public void onFocusChange(View v, boolean hasFocus) {
-		if (hasFocus) {
-			buttonTextColor.setVisibility(View.VISIBLE);
-			menuFragment.hideEditorContentChildren(this);
-			menuFragment.hideMenuButtons(buttonTextColor);
-		}
-		else {
-			buttonTextColor.setVisibility(View.INVISIBLE);
-			menuFragment.showEditorContentChildren(this);
-			menuFragment.showMenuButtons(buttonTextColor);
-		}
-	}
+    public void onFocusChange(View v, boolean hasFocus) {
+        if (hasFocus) {
+            buttonTextColor.setVisibility(View.VISIBLE);
+            menuFragment.hideEditorContentChildren(this);
+            menuFragment.hideMenuButtons(buttonTextColor);
+        }
+        else {
+            buttonTextColor.setVisibility(View.INVISIBLE);
+            menuFragment.showEditorContentChildren(this);
+            menuFragment.showMenuButtons(buttonTextColor);
+        }
+    }
 
 	/*
 	on click, show the colorpicker
@@ -140,46 +140,46 @@ public class TextFragment extends Fragment {
 	on cancel, keep the previous color
 	 */
 
-	private View.OnClickListener onButtonTextColorClickListener() {
-		return new View.OnClickListener() {
+    private View.OnClickListener onButtonTextColorClickListener() {
+        return new View.OnClickListener() {
 
-			@SuppressLint("ClickableViewAccessibility")
-			@Override
-			public void onClick(View view) {
-				ColorPicker colorPicker = new ColorPicker(TextFragment.this.getActivity());
-				colorPicker.show();
-				colorPicker.setOnChooseColorListener(new ColorPicker.OnChooseColorListener() {
-					@Override
-					public void onChooseColor(int position,int color) {
+            @SuppressLint("ClickableViewAccessibility")
+            @Override
+            public void onClick(View view) {
+                ColorPicker colorPicker = new ColorPicker(TextFragment.this.getActivity());
+                colorPicker.show();
+                colorPicker.setOnChooseColorListener(new ColorPicker.OnChooseColorListener() {
+                    @Override
+                    public void onChooseColor(int position,int color) {
 
-						editText.setTextColor(color);
-						buttonTextColor.setBackgroundTintList(ColorStateList.valueOf(color));
-						TextFragment.this.color=color;
-					}
-					@Override
-					public void onCancel(){
-						editText.setTextColor(TextFragment.this.color);
-					}
-				});
-			}
-		};
-	}
+                        editText.setTextColor(color);
+                        buttonTextColor.setBackgroundTintList(ColorStateList.valueOf(color));
+                        TextFragment.this.color=color;
+                    }
+                    @Override
+                    public void onCancel(){
+                        editText.setTextColor(TextFragment.this.color);
+                    }
+                });
+            }
+        };
+    }
 
-	/*
-	on click outside of the edittext, clear the focus and hide the keyboard
-	 */
-	private View.OnClickListener onClickListener() {
-		return new View.OnClickListener() {
+    /*
+    on click outside of the edittext, clear the focus and hide the keyboard
+     */
+    private View.OnClickListener onClickListener() {
+        return new View.OnClickListener() {
 
-			@SuppressLint("ClickableViewAccessibility")
-			@Override
-			public void onClick(View view) {
-				editText.clearFocus();
-				InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(getActivity().INPUT_METHOD_SERVICE);
-				imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-			}
-		};
-	}
+            @SuppressLint("ClickableViewAccessibility")
+            @Override
+            public void onClick(View view) {
+                editText.clearFocus();
+                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(getActivity().INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            }
+        };
+    }
 
 
 }

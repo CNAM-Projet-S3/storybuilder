@@ -18,15 +18,10 @@ import java.util.Objects;
 import info.overflow_bde.storybuilder.MenuFragment;
 import info.overflow_bde.storybuilder.R;
 
-public class InterestPointFragment extends Fragment {
+public class InterestPointFragment extends MovableFragment {
 
     private Bitmap icon;
     private String title;
-    private ViewGroup mainLayout;
-    private MenuFragment menuFragment;
-
-    private int xDelta;
-    private int yDelta;
 
     public InterestPointFragment(Bitmap icon, String title) {
         this.icon = icon;
@@ -41,51 +36,9 @@ public class InterestPointFragment extends Fragment {
         TextView tv = view.findViewById(R.id.layer_title);
         iv.setImageBitmap(this.icon);
         tv.setText(this.title);
-        mainLayout = (RelativeLayout) container.findViewById(R.id.editor_content);
-        menuFragment = (MenuFragment) Objects.requireNonNull(this.getFragmentManager()).findFragmentByTag("menu");
 
-        view.setOnTouchListener(onTouchListener());
+        view.setOnTouchListener(onTouchListener(container, view));
         return view;
     }
 
-
-    private View.OnTouchListener onTouchListener() {
-        return new View.OnTouchListener() {
-
-            @SuppressLint("ClickableViewAccessibility")
-            @Override
-            public boolean onTouch(View view, MotionEvent event) {
-
-                final int x = (int) event.getRawX();
-                final int y = (int) event.getRawY();
-
-                switch (event.getAction() & MotionEvent.ACTION_MASK) {
-
-                    case MotionEvent.ACTION_DOWN:
-                        menuFragment.hide();
-                        RelativeLayout.LayoutParams lParams = (RelativeLayout.LayoutParams)
-                                view.getLayoutParams();
-
-                        xDelta = x - lParams.leftMargin;
-                        yDelta = y - lParams.topMargin;
-                        break;
-                    case MotionEvent.ACTION_UP:
-                        menuFragment.show();
-                        break;
-                    case MotionEvent.ACTION_MOVE:
-                        menuFragment.hide();
-                        RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) view
-                                .getLayoutParams();
-                        layoutParams.leftMargin = x - xDelta;
-                        layoutParams.topMargin = y - yDelta;
-                        layoutParams.rightMargin = 0;
-                        layoutParams.bottomMargin = 0;
-                        view.setLayoutParams(layoutParams);
-                        break;
-                }
-                mainLayout.invalidate();
-                return true;
-            }
-        };
-    }
 }
